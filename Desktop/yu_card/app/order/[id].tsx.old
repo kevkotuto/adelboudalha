@@ -1,0 +1,371 @@
+import React, { useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+import { Title, Paragraph, Caption } from '@/components/ui/Typography';
+import { Button, IconButton } from '@/components/ui/Buttons';
+import { Container, Card, Divider } from '@/components/ui/Layout';
+import { OrderDetailCard, GiftCardCodeModal } from '@/components/ui';
+import { Colors, Spacing, BorderRadius } from '@/constants';
+import useTranslation from '@/hooks/useTranslation';
+import { mockOrders, getGiftCardById, getPhysicalProductById } from '@/data/mockData';
+import { OrderDetails, GiftCardCode } from '@/types/cart';
+
+export default function OrderDetailScreen() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
+
+  const [showCodeModal, setShowCodeModal] = useState(false);
+
+  // Trouver la commande et enrichir avec les détails du produit
+  const baseOrder = mockOrders.find(order => order.id === id);
+
+  if (!baseOrder) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Container>
+          <View style={styles.header}>
+            <IconButton
+              icon="arrow-back"
+              variant="ghost"
+              onPress={() => router.back()}
+            />
+            <Title level={3}>{t('orders.order_not_found')}</Title>
+          </View>
+        </Container>
+      </SafeAreaView>
+    );
+  }
+
+  // Enrichir la commande avec les détails du produit
+  const product = baseOrder.type === 'gift_card'
+    ? getGiftCardById(baseOrder.itemId)
+    : getPhysicalProductById(baseOrder.itemId);
+
+  const orderDetails: OrderDetails = {
+    ...baseOrder,
+    itemImage: product?.image || product?.images?.[0],
+    unitPrice: baseOrder.totalAmount / baseOrder.quantity,
+    giftCardActivated: baseOrder.type === 'gift_card' ? true : undefined,
+    giftCardExpiryDate: baseOrder.type === 'gift_card' ? '2025-12-31' : undefined,
+    billing: {
+      subtotal: baseOrder.totalAmount,
+      shipping: 0,
+      taxes: 0,
+      total: baseOrder.totalAmount,
+    },
+  };
+
+  // Mock gift card code data
+  const giftCardCodeData: GiftCardCode = {
+    code: baseOrder.giftCardCode || 'APPLE1234ABCD5678',
+    brand: product?.brand || 'Apple',
+    amount: orderDetails.type === 'gift_card' ? orderDetails.totalAmount : 0,
+    currency: orderDetails.currency,
+    expiryDate: '2025-12-31',
+    activated: true,
+    usageInstructions: t('orders.usage_instructions_text'),
+    termsAndConditions: t('orders.terms_conditions_text'),
+  };
+
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat('fr-FR').format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const handleViewCode = () => {
+    setShowCodeModal(true);
+  };
+
+  const handleTrackOrder = () => {
+    Alert.alert(
+      t('orders.tracking_info'),
+      t('orders.tracking_info_message'),
+      [{ text: t('common.ok') }]
+    );
+  };
+
+  const handleContactSupport = () => {
+    Alert.alert(
+      t('orders.contact_support'),
+      t('orders.support_message'),
+      [{ text: t('common.ok') }]
+    );
+  };
+
+  const handleReorder = () => {
+    Alert.alert(
+      t('orders.reorder'),
+      t('orders.reorder_message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('orders.add_to_cart'), onPress: () => {} },
+      ]
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Container>
+        {/* Header */}
+        <View style={styles.header}>
+          <IconButton
+            icon="arrow-back"
+            variant="ghost"
+            onPress={() => router.back()}
+          />
+          <View style={styles.headerText}>
+            <Title level={4}>{t('orders.order_details')}</Title>
+            <Caption color="secondary">#{orderDetails.id}</Caption>
+          </View>
+        </View>
+
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {/* Order Detail Card */}
+          <OrderDetailCard
+            order={orderDetails}
+            onViewCode={handleViewCode}
+            onTrackOrder={handleTrackOrder}
+            onContactSupport={handleContactSupport}
+          />
+
+          {/* Order Timeline */}
+          {orderDetails.type === 'physical_product' && orderDetails.tracking && (
+            <Card style={styles.timelineCard}>
+              <Title level={5} style={styles.sectionTitle}>
+                {t('orders.order_timeline')}
+              </Title>
+
+              <View style={styles.timeline}>
+                {orderDetails.tracking.updates?.map((update, index) => (
+                  <View key={index} style={styles.timelineItem}>
+                    <View style={styles.timelineDot} />
+                    <View style={styles.timelineContent}>
+                      <Paragraph weight="medium">{update.status}</Paragraph>
+                      <Caption color="secondary">{update.description}</Caption>
+                      <Caption color="tertiary">
+                        {formatDate(update.date)}
+                        {update.location && ` • ${update.location}`}
+                      </Caption>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </Card>
+          )}
+
+          {/* Billing Details */}
+          {orderDetails.billing && (
+            <Card style={styles.billingCard}>
+              <Title level={5} style={styles.sectionTitle}>
+                {t('orders.billing_details')}
+              </Title>
+
+              <View style={styles.billingRow}>
+                <Caption color="secondary">{t('orders.subtotal')}</Caption>
+                <Caption>{formatAmount(orderDetails.billing.subtotal)} {orderDetails.currency}</Caption>
+              </View>
+
+              <View style={styles.billingRow}>
+                <Caption color="secondary">{t('orders.shipping')}</Caption>
+                <Caption>
+                  {orderDetails.billing.shipping === 0
+                    ? t('orders.free')
+                    : `${formatAmount(orderDetails.billing.shipping)} ${orderDetails.currency}`
+                  }
+                </Caption>
+              </View>
+
+              <View style={styles.billingRow}>
+                <Caption color="secondary">{t('orders.taxes')}</Caption>
+                <Caption>{formatAmount(orderDetails.billing.taxes)} {orderDetails.currency}</Caption>
+              </View>
+
+              {orderDetails.billing.discount && (
+                <View style={styles.billingRow}>
+                  <Caption color="secondary">{t('orders.discount')}</Caption>
+                  <Caption color="success">
+                    -{formatAmount(orderDetails.billing.discount)} {orderDetails.currency}
+                  </Caption>
+                </View>
+              )}
+
+              <Divider style={styles.billingDivider} />
+
+              <View style={styles.totalRow}>
+                <Paragraph weight="medium">{t('orders.total')}</Paragraph>
+                <Paragraph weight="bold" color="primary">
+                  {formatAmount(orderDetails.billing.total)} {orderDetails.currency}
+                </Paragraph>
+              </View>
+            </Card>
+          )}
+
+          {/* Shipping Address */}
+          {orderDetails.shippingAddress && (
+            <Card style={styles.addressCard}>
+              <Title level={5} style={styles.sectionTitle}>
+                {t('orders.shipping_address')}
+              </Title>
+
+              <View style={styles.addressContent}>
+                <Paragraph weight="medium">{orderDetails.shippingAddress.fullName}</Paragraph>
+                <Caption color="secondary">{orderDetails.shippingAddress.phone}</Caption>
+                <Caption color="secondary">{orderDetails.shippingAddress.address}</Caption>
+                <Caption color="secondary">
+                  {orderDetails.shippingAddress.city} {orderDetails.shippingAddress.postalCode}
+                </Caption>
+              </View>
+            </Card>
+          )}
+
+          {/* Actions */}
+          <View style={styles.actionsSection}>
+            <Button
+              variant="outline"
+              onPress={handleReorder}
+              style={styles.actionButton}
+              fullWidth
+            >
+              <Ionicons name="refresh-outline" size={16} color={Colors.primary} />
+              {t('orders.reorder')}
+            </Button>
+
+            <Button
+              variant="ghost"
+              onPress={handleContactSupport}
+              style={styles.actionButton}
+              fullWidth
+            >
+              <Ionicons name="help-circle-outline" size={16} color={Colors.gray[600]} />
+              {t('orders.need_help')}
+            </Button>
+          </View>
+        </ScrollView>
+      </Container>
+
+      {/* Gift Card Code Modal */}
+      {orderDetails.type === 'gift_card' && (
+        <GiftCardCodeModal
+          visible={showCodeModal}
+          giftCardCode={giftCardCodeData}
+          onClose={() => setShowCodeModal(false)}
+        />
+      )}
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background.primary,
+  },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    gap: Spacing.md,
+  },
+
+  headerText: {
+    flex: 1,
+  },
+
+  content: {
+    flex: 1,
+  },
+
+  timelineCard: {
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+
+  sectionTitle: {
+    marginBottom: Spacing.lg,
+  },
+
+  timeline: {
+    gap: Spacing.lg,
+  },
+
+  timelineItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+
+  timelineDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: Colors.primary,
+    marginRight: Spacing.md,
+    marginTop: 4,
+  },
+
+  timelineContent: {
+    flex: 1,
+    gap: Spacing.xs,
+  },
+
+  billingCard: {
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+
+  billingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+
+  billingDivider: {
+    marginVertical: Spacing.md,
+  },
+
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  addressCard: {
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+
+  addressContent: {
+    gap: Spacing.xs,
+  },
+
+  actionsSection: {
+    gap: Spacing.md,
+    paddingBottom: Spacing.xl,
+  },
+
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+});

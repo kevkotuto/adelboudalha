@@ -1,0 +1,887 @@
+{
+  "common": {
+    "continue": "Continuar",
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "previous": "Anterior",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "done": "Hecho",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "OK",
+    "error": "Error",
+    "search": "Buscar...",
+    "loading": "Cargando...",
+    "all": "Todo",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "add": "Añadir",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "buy": "Comprar",
+    "quantity": "Cantidad",
+    "total": "Total",
+    "price": "Precio",
+    "stock": "Stock",
+    "rating": "Calificación",
+    "reviews": "Reseñas",
+    "discount": "Descuento",
+    "popular": "Popular"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "subtitle": "Inicia sesión en tu cuenta Yu Card",
+      "button": "Iniciar Sesión",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "registerLink": "Crear cuenta",
+      "or": "o"
+    },
+    "register": {
+      "title": "Crear Cuenta",
+      "subtitle": "Únete a Yu Card y descubre nuestras ofertas",
+      "button": "Crear Cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "loginLink": "Iniciar Sesión",
+      "or": "o"
+    },
+    "forgotPassword": {
+      "title": "¿Olvidaste tu contraseña?",
+      "subtitle": "Ingresa tu número de teléfono para recibir un código de restablecimiento",
+      "sendCode": "Enviar Código",
+      "rememberPassword": "¿Recuerdas tu contraseña?",
+      "backToLogin": "Volver al Inicio de Sesión"
+    },
+    "otp": {
+      "title": "Ingresa el código de verificación de 6 dígitos",
+      "subtitle": "Te enviamos un código de verificación a",
+      "verify": "Continuar",
+      "resend": "Reenviar Código",
+      "resendIn": "Reenviar código en",
+      "resent": "Código Reenviado",
+      "resentMessage": "Se ha enviado un nuevo código de verificación.",
+      "verificationRequired": "Verificación Requerida",
+      "verificationRequiredMessage": "Tu teléfono aún no está verificado. Se te ha enviado un código de verificación."
+    },
+    "resetPassword": {
+      "title": "Nueva Contraseña",
+      "subtitle": "Crea una nueva contraseña segura para tu cuenta",
+      "button": "Restablecer Contraseña",
+      "success": "Éxito",
+      "successMessage": "Tu contraseña ha sido restablecida exitosamente.",
+      "backToLogin": "Volver al Inicio de Sesión"
+    },
+    "logout": "Cerrar sesión",
+    "fields": {
+      "phoneNumber": "Número de Teléfono",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "firstName": "Nombre",
+      "lastName": "Apellido (opcional)",
+      "fullName": "Nombre Completo",
+      "newPassword": "Nueva Contraseña",
+      "confirmNewPassword": "Confirmar Nueva Contraseña"
+    },
+    "placeholders": {
+      "phoneNumber": "+225 XX XX XX XX XX",
+      "password": "Ingresa tu contraseña",
+      "confirmPassword": "Confirma tu contraseña",
+      "firstName": "Ingresa tu nombre",
+      "lastName": "Ingresa tu apellido",
+      "fullName": "Ingresa tu nombre completo",
+      "newPassword": "Ingresa tu nueva contraseña",
+      "confirmNewPassword": "Confirma tu nueva contraseña"
+    },
+    "errors": {
+      "phoneRequired": "Número de teléfono requerido",
+      "phoneInvalid": "Número de teléfono inválido",
+      "passwordRequired": "Contraseña requerida",
+      "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+      "confirmPasswordRequired": "Confirmación de contraseña requerida",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "firstNameRequired": "Nombre requerido",
+      "loginFailed": "Error en el inicio de sesión",
+      "loginFailedMessage": "Verifica tus credenciales e intenta de nuevo",
+      "registerFailed": "Error en el registro",
+      "registerFailedMessage": "No se pudo crear tu cuenta. Intenta de nuevo",
+      "fullNameRequired": "Nombre completo requerido",
+      "invalidOTP": "Código inválido",
+      "otpRequired": "Por favor ingresa el código de 4 dígitos",
+      "missingPhone": "Error",
+      "missingPhoneMessage": "Número de teléfono faltante. Por favor comienza de nuevo.",
+      "otpVerificationFailed": "El código ingresado es incorrecto. Intenta de nuevo.",
+      "verificationFailed": "Verificación fallida",
+      "tryAgain": "Ocurrió un error. Intenta de nuevo.",
+      "resendFailed": "Error",
+      "resendFailedMessage": "No se pudo reenviar el código. Intenta de nuevo.",
+      "forgotPasswordFailed": "Error",
+      "forgotPasswordFailedMessage": "No se pudo enviar el código. Intenta de nuevo.",
+      "missingData": "Error",
+      "missingDataMessage": "Datos faltantes. Por favor reinicia el proceso.",
+      "resetPasswordFailed": "Error",
+      "resetPasswordFailedMessage": "No se pudo restablecer la contraseña. Intenta de nuevo."
+    }
+  },
+  "tabs": {
+    "home": "Inicio",
+    "categories": "Categorías",
+    "orders": "Pedidos",
+    "profile": "Perfil"
+  },
+  "admin_tabs": {
+    "dashboard": "Panel",
+    "orders": "Pedidos",
+    "products": "Productos",
+    "gift_codes": "Códigos",
+    "users": "Usuarios",
+    "categories": "Categorías",
+    "delivery": "Entrega",
+    "notifications": "Notificaciones",
+    "settings": "Configuración"
+  },
+  "languages": {
+    "select_language": "Elige tu idioma",
+    "language_names": {
+      "fr": "Français",
+      "en": "English",
+      "ar": "العربية",
+      "es": "Español",
+      "bm": "Bamanankan"
+    }
+  },
+  "onboarding": {
+    "page1": {
+      "title": "Bienvenido",
+      "text": "Descubre nuestra aplicación"
+    },
+    "page2": {
+      "title": "Características",
+      "text": "Explora todas las posibilidades"
+    },
+    "page3": {
+      "title": "Comenzar",
+      "text": "¿Listo para empezar?"
+    }
+  },
+  "orders": {
+    "title": "Mis Pedidos",
+    "view_code": "Ver Código",
+    "copy_code": "Copiar Código",
+    "share_code": "Compartir Código",
+    "contact_support": "Contactar Soporte",
+    "gift_card_code": "Código de Tarjeta Regalo",
+    "order_details": "Detalles del Pedido",
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmado",
+      "processing": "Procesando",
+      "shipped": "Enviado",
+      "delivered": "Entregado",
+      "cancelled": "Cancelado"
+    }
+  },
+  "cart": {
+    "title": "Carrito",
+    "empty": "Tu carrito está vacío",
+    "checkout": "Pagar",
+    "checkout_description": "Pago de su pedido Yu Card",
+    "checkout_with_wave": "Pagar con Wave",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "delivery": "Entrega",
+    "free_delivery": "Entrega gratuita",
+    "gift_card": "Tarjeta regalo",
+    "clear_all": "Vaciar carrito",
+    "empty_description": "Añade artículos para comenzar a comprar",
+    "continue_shopping": "Continuar comprando",
+    "remove_item": "Quitar artículo",
+    "update_quantity": "Actualizar cantidad",
+    "item": "artículo",
+    "items": "artículos",
+    "taxes": "Impuestos",
+    "included": "Incluidos",
+    "unit_price": "Precio unitario",
+    "max_quantity_reached": "Cantidad máxima alcanzada",
+    "order_summary": "Resumen del pedido",
+    "secure_payment_wave": "Pago seguro con Wave Wallet",
+    "toast": {
+      "added_title": "Añadido al carrito",
+      "added_subtitle": "{{product}} se ha añadido a tu carrito",
+      "error_title": "Error",
+      "error_subtitle": "No se pudo añadir al carrito",
+      "removed_title": "Eliminado del carrito",
+      "removed_subtitle": "{{product}} ha sido eliminado",
+      "removed_subtitle_generic": "El artículo ha sido eliminado del carrito",
+      "cleared_title": "Carrito vaciado",
+      "cleared_subtitle": "Todos los artículos han sido eliminados",
+      "quantity_updated_title": "Cantidad actualizada",
+      "quantity_updated_subtitle": "La cantidad ha sido actualizada"
+    }
+  },
+  "search": {
+    "results": "Resultados de búsqueda",
+    "results_found": "resultados encontrados",
+    "no_results": "No se encontraron resultados",
+    "no_results_for": "No hay resultados para",
+    "try_different_filters": "Prueba filtros diferentes"
+  },
+  "filter": {
+    "title": "Filtros",
+    "reset": "Reiniciar",
+    "apply": "Aplicar filtros",
+    "type": "Tipo de producto",
+    "category": "Categoría",
+    "all": "Todo",
+    "gift_cards": "Tarjetas regalo",
+    "gift_card": "Tarjeta regalo",
+    "products": "Productos físicos",
+    "product": "Producto"
+  },
+  "sort": {
+    "title": "Ordenar por",
+    "relevance": "Relevancia",
+    "popularity": "Popularidad",
+    "price_low_to_high": "Precio: menor a mayor",
+    "price_high_to_low": "Precio: mayor a menor",
+    "newest": "Más nuevos",
+    "rating": "Mejor calificados"
+  },
+  "home": {
+    "welcome": "Marketplace",
+    "subtitle": "Tus tarjetas regalo y productos favoritos",
+    "popular_gift_cards": "Tarjetas Regalo Populares",
+    "popular_products": "Productos Populares",
+    "see_all": "Ver todo",
+    "special_offers": "Ofertas Especiales",
+    "new_arrivals": "Novedades"
+  },
+  "categories": {
+    "title": "Categorías",
+    "all": "Todas las categorías",
+    "gift_cards": "Tarjetas Regalo",
+    "physical_products": "Productos Físicos",
+    "gaming": "Juegos",
+    "tech": "Tecnología",
+    "entertainment": "Entretenimiento",
+    "shopping": "Compras",
+    "smartphone": "Smartphones",
+    "tablet": "Tabletas",
+    "accessories": "Accesorios",
+    "laptop": "Portátiles",
+    "filter_by_category": "Filtrar por categoría",
+    "no_products": "No se encontraron productos"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "personal_info": "Información personal",
+    "name": "Nombre completo",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "address": "Dirección",
+    "preferences": "Preferencias",
+    "language": "Idioma",
+    "notifications_label": "Notificaciones",
+    "push_notifications": "Notificaciones push",
+    "push_notifications_subtitle": "Recibir alertas en tu dispositivo",
+    "newsletter": "Boletín",
+    "account": "Cuenta",
+    "change_password": "Cambiar contraseña",
+    "edit_profile": "Editar perfil",
+    "save_changes": "Guardar cambios",
+    "logout": {
+      "title": "Cerrar sesión",
+      "message": "¿Estás seguro de que quieres cerrar sesión?",
+      "confirm": "Cerrar sesión"
+    },
+    "notifications": {
+      "permission_denied_title": "Permiso denegado",
+      "permission_denied_message": "Debes permitir las notificaciones en la configuración de tu dispositivo."
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "unread": "no leída(s)",
+    "mark_all_read": "Marcar todo como leído",
+    "empty_title": "Sin notificaciones",
+    "empty_message": "No tienes notificaciones en este momento",
+    "error_title": "Error de carga",
+    "delete_title": "Eliminar",
+    "delete_message": "¿Quieres eliminar esta notificación?",
+    "delete_error": "No se puede eliminar la notificación",
+    "mark_all_error": "No se pueden marcar todas las notificaciones como leídas",
+    "success": "Éxito",
+    "all_marked_read": "Todas las notificaciones han sido marcadas como leídas",
+    "just_now": "Ahora mismo",
+    "minutes_ago": "min",
+    "hours_ago": "h",
+    "days_ago": "d"
+  },
+  "product": {
+    "details": "Detalles del producto",
+    "specifications": "Especificaciones",
+    "description": "Descripción",
+    "add_to_cart": "Añadir al carrito",
+    "buy_now": "Comprar ahora",
+    "delivery_time": "Tiempo de entrega",
+    "in_stock": "En stock",
+    "limited_stock": "Stock limitado",
+    "brand": "Marca"
+  },
+  "payment": {
+    "title": "Pago",
+    "wave_wallet": "Wave Wallet",
+    "enter_phone": "Ingresa tu número de teléfono",
+    "use_my_number": "Usar mi número",
+    "confirm_payment": "Confirmar pago",
+    "payment_success": "Pago exitoso",
+    "payment_failed": "Pago fallido",
+    "processing": "Procesando..."
+  },
+  "errors": {
+    "auth": {
+      "phone_required": "El número de teléfono es requerido",
+      "phone_invalid": "El número de teléfono no es válido",
+      "phone_format_invalid": "Formato de número de teléfono inválido",
+      "otp_required": "El código OTP es requerido",
+      "otp_invalid": "El código OTP no es válido",
+      "otp_expired": "El código OTP ha expirado",
+      "password_required": "La contraseña es requerida",
+      "password_too_short": "La contraseña debe tener al menos 6 caracteres",
+      "email_invalid": "La dirección de email no es válida",
+      "auth_failed": "Fallo en la autenticación",
+      "token_expired": "Tu sesión ha expirado",
+      "unauthorized": "Acceso no autorizado"
+    },
+    "cart": {
+      "empty_cart": "Tu carrito está vacío",
+      "quantity_required": "La cantidad debe ser mayor a 0",
+      "gift_card_amount_invalid": "El monto de la tarjeta regalo no es válido",
+      "gift_card_amount_required": "El monto de la tarjeta regalo es requerido",
+      "out_of_stock": "Este producto está agotado",
+      "gift_card_unavailable": "Esta tarjeta regalo ya no está disponible",
+      "insufficient_stock": "Stock insuficiente",
+      "max_quantity_exceeded": "Cantidad máxima excedida"
+    },
+    "order": {
+      "no_items": "El pedido no contiene artículos",
+      "shipping_address_required": "Se requiere dirección de envío para productos físicos",
+      "payment_not_confirmed": "El pago no ha sido confirmado",
+      "order_not_found": "Pedido no encontrado",
+      "cannot_cancel": "Este pedido no puede ser cancelado",
+      "already_cancelled": "Este pedido ya ha sido cancelado"
+    },
+    "user": {
+      "full_name_required": "El nombre completo es requerido",
+      "phone_required": "El número de teléfono es requerido",
+      "address_required": "La dirección es requerida",
+      "city_required": "La ciudad es requerida",
+      "profile_incomplete": "Por favor completa tu perfil"
+    },
+    "wave": {
+      "amount_required": "El monto es requerido",
+      "amount_too_low": "El monto mínimo es 100 XOF",
+      "amount_too_high": "El monto máximo es 5,000,000 XOF",
+      "phone_required": "El número de teléfono Wave es requerido",
+      "phone_invalid": "El número de teléfono Wave no es válido",
+      "payment_failed": "El pago falló",
+      "insufficient_balance": "Saldo insuficiente",
+      "transaction_failed": "La transacción falló",
+      "network_error": "Error de red",
+      "service_unavailable": "Servicio temporalmente no disponible"
+    },
+    "network": {
+      "connection_error": "Error de conexión",
+      "timeout": "Tiempo de espera agotado",
+      "server_error": "Error del servidor",
+      "unknown_error": "Error desconocido"
+    }
+  },
+  "status": {
+    "order": {
+      "pending": {
+        "label": "Pendiente",
+        "description": "Tu pedido está siendo procesado"
+      },
+      "confirmed": {
+        "label": "Confirmado",
+        "description": "Tu pedido ha sido confirmado"
+      },
+      "processing": {
+        "label": "Procesando",
+        "description": "Tu pedido está siendo preparado"
+      },
+      "shipped": {
+        "label": "Enviado",
+        "description": "Tu pedido ha sido enviado"
+      },
+      "delivered": {
+        "label": "Entregado",
+        "description": "Tu pedido ha sido entregado"
+      },
+      "cancelled": {
+        "label": "Cancelado",
+        "description": "Tu pedido ha sido cancelado"
+      },
+      "refunded": {
+        "label": "Reembolsado",
+        "description": "Tu pedido ha sido reembolsado"
+      }
+    },
+    "payment": {
+      "pending": "Pendiente",
+      "processing": "Procesando",
+      "completed": "Completado",
+      "failed": "Fallido",
+      "cancelled": "Cancelado",
+      "refunded": "Reembolsado"
+    },
+    "wave": {
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "failed": "Fallido",
+      "cancelled": "Cancelado",
+      "expired": "Expirado"
+    }
+  },
+  "validation": {
+    "gift_card": {
+      "amount_below_min": "El monto mínimo es {min} XOF",
+      "amount_above_max": "El monto máximo es {max} XOF",
+      "amount_not_multiple": "El monto debe ser múltiplo de {step} XOF",
+      "out_of_stock": "Esta tarjeta regalo está agotada",
+      "inactive": "Esta tarjeta regalo ya no está activa"
+    },
+    "product": {
+      "out_of_stock": "Este producto está agotado",
+      "inactive": "Este producto ya no está disponible",
+      "quantity_exceeded": "Cantidad solicitada excede el stock disponible"
+    },
+    "phone": {
+      "senegal_format": "El número debe estar en formato senegalés (+221)",
+      "ivory_coast_format": "El número debe estar en formato marfileño (+225)",
+      "invalid_operator": "Operador no soportado",
+      "invalid_length": "Longitud de número inválida"
+    }
+  },
+  "messages": {
+    "payment": {
+      "initiation_instructions": "Marca *144*1*{amount}*{reference}# desde tu teléfono Wave para validar el pago",
+      "retry_instructions": "Si el pago falló, reintenta marcando *144*1*{amount}*{reference}#",
+      "amount_details": "Monto: {amount} XOF",
+      "reference_details": "Referencia: {reference}",
+      "timeout_warning": "Este pago expirará en {minutes} minutos",
+      "success_message": "Tu pago de {amount} XOF fue exitoso",
+      "failed_message": "Tu pago de {amount} XOF falló. Por favor intenta de nuevo"
+    },
+    "order": {
+      "gift_card_amount_details": "Monto: {amount} XOF",
+      "quantity_details": "Cantidad: {quantity}",
+      "sku_details": "SKU: {sku}",
+      "unknown_product": "Producto desconocido",
+      "items_removed_count": "{count} artículo(s) eliminado(s)",
+      "stock_available": "Solo {count} unidades disponibles",
+      "cards_available": "Solo {count} tarjetas disponibles"
+    },
+    "shipping": {
+      "base_cost": "Costo base: {amount} XOF",
+      "additional_items": "Artículos adicionales: {amount} XOF",
+      "location_adjustment": "Ajuste de ubicación: {percentage}%",
+      "abidjan_discount": "Descuento Abidjan: -20%",
+      "remote_area_surcharge": "Recargo área remota: +50%"
+    }
+  },
+  "currency": {
+    "xof": "XOF",
+    "format": "{amount} XOF",
+    "format_with_space": "{amount} XOF"
+  },
+  "locations": {
+    "abidjan": "Abidjan",
+    "bouake": "Bouaké",
+    "san_pedro": "San-Pedro",
+    "yamoussoukro": "Yamoussoukro",
+    "ivory_coast": "Costa de Marfil"
+  },
+  "update": {
+    "title": "Actualización Disponible",
+    "message": "Una nueva versión de la aplicación está disponible. Actualiza ahora para la mejor experiencia.",
+    "downloading": "Descargando actualización...",
+    "updating": "Instalando actualización...",
+    "update_now": "Actualizar Ahora",
+    "later": "Más Tarde",
+    "version": "Versión",
+    "check_updates": "Buscar Actualizaciones",
+    "no_update_available": "Sin Actualizaciones",
+    "app_up_to_date": "Tu app está actualizada"
+  },
+  "admin": {
+    "common": {
+      "search": "Buscar...",
+      "filter": "Filtrar",
+      "export": "Exportar",
+      "import": "Importar",
+      "actions": "Acciones",
+      "bulk_actions": "Acciones masivas",
+      "select_all": "Seleccionar todo",
+      "deselect_all": "Deseleccionar todo",
+      "delete_selected": "Eliminar seleccionados",
+      "refresh": "Actualizar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "view": "Ver",
+      "details": "Detalles",
+      "status": "Estado",
+      "date": "Fecha",
+      "actions_menu": "Menú de acciones",
+      "no_data": "Sin datos",
+      "loading": "Cargando...",
+      "error": "Error",
+      "success": "Éxito",
+      "confirm": "Confirmar",
+      "download": "Descargar",
+      "upload": "Subir",
+      "image": "Imagen",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "dashboard": {
+      "title": "Panel de Administración",
+      "subtitle": "Resumen de la plataforma Yu Card",
+      "overview": "Resumen",
+      "quick_stats": "Estadísticas rápidas",
+      "recent_activity": "Actividad reciente",
+      "analytics": "Analíticas",
+      "revenue": "Ingresos",
+      "total_revenue": "Ingresos totales",
+      "today_revenue": "Ingresos de hoy",
+      "monthly_revenue": "Ingresos mensuales",
+      "orders": "Pedidos",
+      "total_orders": "Total de pedidos",
+      "pending_orders": "Pedidos pendientes",
+      "completed_orders": "Pedidos completados",
+      "users": "Usuarios",
+      "total_users": "Total de usuarios",
+      "new_users": "Nuevos usuarios",
+      "active_users": "Usuarios activos",
+      "products": "Productos",
+      "total_products": "Total de productos",
+      "low_stock": "Stock bajo",
+      "out_of_stock": "Sin stock",
+      "gift_cards": "Tarjetas regalo",
+      "total_gift_cards": "Total de tarjetas",
+      "active_codes": "Códigos activos",
+      "used_codes": "Códigos usados",
+      "period": {
+        "today": "Hoy",
+        "week": "Esta semana",
+        "month": "Este mes",
+        "year": "Este año",
+        "custom": "Personalizado"
+      },
+      "charts": {
+        "revenue_trend": "Tendencia de ingresos",
+        "orders_by_status": "Pedidos por estado",
+        "top_products": "Mejores productos",
+        "user_growth": "Crecimiento de usuarios"
+      }
+    },
+    "users": {
+      "title": "Gestión de Usuarios",
+      "subtitle": "Administrar cuentas de usuario y roles",
+      "all_users": "Todos los usuarios",
+      "user_details": "Detalles del usuario",
+      "edit_user": "Editar usuario",
+      "suspend_user": "Suspender usuario",
+      "activate_user": "Activar usuario",
+      "delete_user": "Eliminar usuario",
+      "user_info": "Información del usuario",
+      "full_name": "Nombre completo",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "status": "Estado",
+      "created_at": "Fecha de creación",
+      "last_login": "Último acceso",
+      "wallet_balance": "Saldo de la billetera",
+      "total_orders": "Total de pedidos",
+      "total_spent": "Total gastado",
+      "filter_by_role": "Filtrar por rol",
+      "filter_by_status": "Filtrar por estado",
+      "statuses": {
+        "all": "Todos",
+        "active": "Activo",
+        "suspended": "Suspendido",
+        "pending": "Pendiente"
+      },
+      "roles": {
+        "all": "Todos los roles",
+        "client": "Cliente",
+        "admin": "Administrador",
+        "super_admin": "Super Administrador"
+      },
+      "wallet": {
+        "title": "Gestión de Billetera",
+        "credit": "Acreditar",
+        "debit": "Debitar",
+        "amount": "Cantidad",
+        "description": "Descripción",
+        "confirm_credit": "Confirmar crédito",
+        "confirm_debit": "Confirmar débito",
+        "current_balance": "Saldo actual",
+        "new_balance": "Nuevo saldo"
+      },
+      "suspend_confirm": "Confirmar suspensión",
+      "suspend_message": "¿Está seguro de suspender este usuario?",
+      "activate_confirm": "Confirmar activación",
+      "activate_message": "¿Está seguro de activar este usuario?"
+    },
+    "orders": {
+      "title": "Gestión de Pedidos",
+      "subtitle": "Seguimiento y procesamiento de pedidos",
+      "all_orders": "Todos los pedidos",
+      "order_details": "Detalles del pedido",
+      "order_number": "Número de pedido",
+      "customer": "Cliente",
+      "order_date": "Fecha del pedido",
+      "status": "Estado",
+      "payment_status": "Estado del pago",
+      "total_amount": "Monto total",
+      "items": "Artículos",
+      "shipping": "Envío",
+      "shipping_address": "Dirección de envío",
+      "delivery_date": "Fecha de entrega",
+      "tracking_number": "Número de seguimiento",
+      "filter_by_status": "Filtrar por estado",
+      "filter_by_payment": "Filtrar por pago",
+      "date_range": "Rango de fechas",
+      "from_date": "Desde",
+      "to_date": "Hasta",
+      "statuses": {
+        "all": "Todos",
+        "pending": "Pendiente",
+        "confirmed": "Confirmado",
+        "processing": "Procesando",
+        "shipped": "Enviado",
+        "delivered": "Entregado",
+        "cancelled": "Cancelado",
+        "refunded": "Reembolsado"
+      },
+      "payment_statuses": {
+        "all": "Todos",
+        "pending": "Pendiente",
+        "completed": "Completado",
+        "failed": "Fallido",
+        "refunded": "Reembolsado"
+      },
+      "update_status": "Actualizar estado",
+      "change_status": "Cambiar estado",
+      "select_new_status": "Seleccionar nuevo estado",
+      "status_updated": "Estado actualizado",
+      "export_csv": "Exportar CSV",
+      "print_invoice": "Imprimir factura",
+      "send_notification": "Enviar notificación",
+      "refund_order": "Reembolsar pedido",
+      "cancel_order": "Cancelar pedido",
+      "confirm_cancel": "Confirmar cancelación",
+      "confirm_refund": "Confirmar reembolso",
+      "cancel_message": "¿Está seguro de cancelar este pedido?",
+      "refund_message": "¿Está seguro de reembolsar este pedido?"
+    },
+    "products": {
+      "title": "Gestión de Productos",
+      "subtitle": "Administrar catálogo de productos",
+      "all_products": "Todos los productos",
+      "add_product": "Añadir producto",
+      "edit_product": "Editar producto",
+      "delete_product": "Eliminar producto",
+      "product_details": "Detalles del producto",
+      "basic_info": "Información básica",
+      "product_name": "Nombre del producto",
+      "type": "Tipo",
+      "category": "Categoría",
+      "description": "Descripción",
+      "pricing": "Precios",
+      "price": "Precio",
+      "cost_price": "Precio de costo",
+      "discount": "Descuento",
+      "inventory": "Inventario",
+      "stock_quantity": "Cantidad en stock",
+      "sku": "SKU",
+      "barcode": "Código de barras",
+      "track_inventory": "Rastrear inventario",
+      "low_stock_threshold": "Umbral de stock bajo",
+      "images": "Imágenes",
+      "upload_images": "Subir imágenes",
+      "main_image": "Imagen principal",
+      "gallery": "Galería",
+      "settings": "Configuración",
+      "is_popular": "Producto popular",
+      "is_featured": "Producto destacado",
+      "is_active": "Activo",
+      "delivery_time": "Tiempo de entrega (días)",
+      "warranty": "Garantía (meses)",
+      "meta_keywords": "Palabras clave SEO",
+      "confirm_delete": "Confirmar eliminación",
+      "delete_warning": "Esta acción es irreversible",
+      "low_stock": "Stock bajo",
+      "out_of_stock": "Sin stock",
+      "in_stock": "En stock",
+      "views": "Vistas",
+      "favorites": "Favoritos",
+      "sales": "Ventas",
+      "types": {
+        "all": "Todos",
+        "physical": "Producto físico",
+        "gift_card": "Tarjeta regalo"
+      },
+      "stock_status": {
+        "all": "Todos",
+        "in_stock": "En stock",
+        "low_stock": "Stock bajo",
+        "out_of_stock": "Sin stock"
+      }
+    },
+    "gift_cards": {
+      "title": "Gestión de Tarjetas Regalo",
+      "subtitle": "Administrar tarjetas y códigos",
+      "all_codes": "Todos los códigos",
+      "generate_codes": "Generar códigos",
+      "code": "Código",
+      "amount": "Monto",
+      "status": "Estado",
+      "created_at": "Fecha de creación",
+      "expires_at": "Fecha de expiración",
+      "used_at": "Fecha de uso",
+      "user": "Usuario",
+      "statuses": {
+        "all": "Todos",
+        "pending": "Pendiente",
+        "active": "Activo",
+        "used": "Usado",
+        "expired": "Expirado",
+        "cancelled": "Cancelado"
+      },
+      "generation": {
+        "title": "Generar nuevos códigos",
+        "amount": "Monto de la tarjeta",
+        "quantity": "Cantidad",
+        "expiry_days": "Validez (días)",
+        "generate": "Generar",
+        "generating": "Generando..."
+      },
+      "actions": {
+        "activate": "Activar",
+        "cancel": "Cancelar",
+        "details": "Detalles",
+        "copy": "Copiar código",
+        "share": "Compartir"
+      },
+      "activation": {
+        "title": "Activar tarjeta regalo",
+        "email": "Correo electrónico",
+        "confirm": "Activar",
+        "activating": "Activando..."
+      },
+      "details": {
+        "title": "Detalles de la tarjeta",
+        "code": "Código",
+        "amount": "Monto",
+        "status": "Estado",
+        "created": "Fecha de creación",
+        "expires": "Fecha de expiración",
+        "used": "Fecha de uso",
+        "user_email": "Correo del usuario"
+      },
+      "confirm_cancel": "Confirmar cancelación",
+      "cancel_message": "¿Está seguro de cancelar este código?",
+      "success": {
+        "generated": "Códigos generados exitosamente",
+        "activated": "Tarjeta activada",
+        "cancelled": "Código cancelado",
+        "copied": "Copiado",
+        "copiedDesc": "Código copiado al portapapeles"
+      },
+      "errors": {
+        "generateError": "Error al generar códigos",
+        "activateError": "Error al activar",
+        "cancelError": "Error al cancelar",
+        "copyError": "Error al copiar",
+        "emailRequired": "Se requiere correo electrónico"
+      }
+    },
+    "categories": {
+      "title": "Gestión de Categorías",
+      "subtitle": "Organizar productos y tarjetas",
+      "all_categories": "Todas las categorías",
+      "add_category": "Añadir categoría",
+      "edit_category": "Editar categoría",
+      "delete_category": "Eliminar categoría",
+      "category_name": "Nombre de la categoría",
+      "description": "Descripción",
+      "icon": "Icono",
+      "upload_icon": "Subir icono",
+      "products_count": "Número de productos",
+      "is_active": "Activa",
+      "created_at": "Fecha de creación",
+      "confirm_delete": "Confirmar eliminación",
+      "delete_warning": "Esta categoría será eliminada permanentemente",
+      "success": {
+        "created": "Categoría creada",
+        "updated": "Categoría actualizada",
+        "deleted": "Categoría eliminada"
+      },
+      "errors": {
+        "createError": "Error al crear categoría",
+        "updateError": "Error al actualizar",
+        "deleteError": "Error al eliminar",
+        "nameRequired": "El nombre es requerido"
+      }
+    },
+    "delivery": {
+      "title": "Gestión de Entregas",
+      "subtitle": "Seguimiento de entregas en curso"
+    },
+    "notifications": {
+      "title": "Gestión de Notificaciones",
+      "subtitle": "Enviar notificaciones a usuarios"
+    },
+    "reports": {
+      "title": "Informes Financieros",
+      "subtitle": "Análisis y estadísticas financieras"
+    },
+    "audit": {
+      "title": "Registros de Auditoría",
+      "subtitle": "Historial de acciones administrativas"
+    },
+    "settings": {
+      "title": "Configuración de Admin",
+      "subtitle": "Configuración y gestión del sistema Yu Card"
+    },
+    "wallet": {
+      "title": "Gestión de Billetera",
+      "adjust_balance": "Ajustar saldo",
+      "credit": "Acreditar",
+      "debit": "Debitar"
+    },
+    "stats": {
+      "total_revenue": "Ingresos totales",
+      "total_orders": "Total de pedidos",
+      "total_users": "Total de usuarios",
+      "total_products": "Total de productos",
+      "total_wallet": "Total de billeteras"
+    },
+    "messages": {
+      "loading": "Cargando...",
+      "no_data": "Sin datos",
+      "success": "Operación exitosa",
+      "error": "Ocurrió un error",
+      "confirm_action": "Confirmar acción"
+    }
+  }
+}

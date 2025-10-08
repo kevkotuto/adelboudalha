@@ -1,0 +1,285 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CartItem, ProductType } from '@/types';
+import { cartService } from '@/services/cartService';
+
+// ==================================
+// CART STORE INTERFACES
+// ==================================
+
+interface CartState {
+  // Data
+  items: CartItem[];
+  cartId: string | null;
+  subtotal: number;
+  discount: number;
+  total: number;
+  itemsCount: number;
+
+  // Loading states
+  isLoading: boolean;
+  isAdding: boolean;
+  isUpdating: boolean;
+  isRemoving: boolean;
+
+  // Error state
+  error: string | null;
+
+  // Last sync time
+  lastSync: number | null;
+}
+
+interface CartActions {
+  // Fetch cart from server
+  fetchCart: () => Promise<void>;
+
+  // Add item to cart
+  addToCart: (
+    productType: ProductType,
+    productId: string,
+    quantity?: number,
+    giftCardAmount?: number
+  ) => Promise<void>;
+
+  // Update cart item quantity
+  updateQuantity: (cartItemId: string, quantity: number) => Promise<void>;
+
+  // Remove item from cart
+  removeItem: (cartItemId: string) => Promise<void>;
+
+  // Clear entire cart
+  clearCart: () => Promise<void>;
+
+  // Local state management
+  setError: (error: string | null) => void;
+  clearError: () => void;
+
+  // Sync status
+  needsSync: () => boolean;
+}
+
+type CartStore = CartState & CartActions;
+
+// ==================================
+// INITIAL STATE
+// ==================================
+
+const initialState: CartState = {
+  items: [],
+  cartId: null,
+  subtotal: 0,
+  discount: 0,
+  total: 0,
+  itemsCount: 0,
+  isLoading: false,
+  isAdding: false,
+  isUpdating: false,
+  isRemoving: false,
+  error: null,
+  lastSync: null,
+};
+
+// ==================================
+// CART STORE
+// ==================================
+
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set, get) => ({
+      ...initialState,
+
+      // ==================================
+      // FETCH CART
+      // ==================================
+      fetchCart: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const cartData = await cartService.getCart();
+
+          console.log('🛒 Cart Data from Backend:', JSON.stringify(cartData, null, 2));
+
+          // Calculate itemsCount from items if not provided by backend
+          const itemsCount = cartData.itemsCount ||
+            (cartData.items || []).reduce((sum, item) => sum + item.quantity, 0);
+
+          // Calculate totals locally if not provided by backend
+          const calculatedSubtotal = (cartData.items || []).reduce((sum, item) => {
+            const itemPrice = Number(item.giftCardAmount) || item.physicalProduct?.price || 0;
+            return sum + (itemPrice * item.quantity);
+          }, 0);
+
+          const subtotal = cartData.subtotal || calculatedSubtotal;
+          const discount = cartData.discount || 0;
+          const total = cartData.total || (subtotal - discount);
+
+          console.log('💰 Calculated Totals:', {
+            itemsCount,
+            subtotal,
+            discount,
+            total,
+            calculatedSubtotal,
+          });
+
+          set({
+            cartId: cartData.id,
+            items: cartData.items || [],
+            subtotal,
+            discount,
+            total,
+            itemsCount,
+            lastSync: Date.now(),
+            isLoading: false,
+          });
+        } catch (error: any) {
+          console.error('Failed to fetch cart:', error);
+          set({
+            error: error.message || 'Échec du chargement du panier',
+            isLoading: false,
+          });
+        }
+      },
+
+      // ==================================
+      // ADD TO CART
+      // ==================================
+      addToCart: async (productType, productId, quantity = 1, giftCardAmount) => {
+        set({ isAdding: true, error: null });
+        try {
+          const newItem = await cartService.addToCart(
+            productType,
+            productId,
+            quantity,
+            giftCardAmount
+          );
+
+          // Refetch cart to get updated totals
+          await get().fetchCart();
+
+          set({ isAdding: false });
+        } catch (error: any) {
+          console.error('Failed to add to cart:', error);
+          set({
+            error: error.message || 'Échec de l\'ajout au panier',
+            isAdding: false,
+          });
+          throw error;
+        }
+      },
+
+      // ==================================
+      // UPDATE QUANTITY
+      // ==================================
+      updateQuantity: async (cartItemId, quantity) => {
+        if (quantity <= 0) {
+          await get().removeItem(cartItemId);
+          return;
+        }
+
+        set({ isUpdating: true, error: null });
+        try {
+          await cartService.updateCartItem(cartItemId, { quantity });
+
+          // Refetch cart to get updated totals
+          await get().fetchCart();
+
+          set({ isUpdating: false });
+        } catch (error: any) {
+          console.error('Failed to update cart item:', error);
+          set({
+            error: error.message || 'Échec de la mise à jour',
+            isUpdating: false,
+          });
+          throw error;
+        }
+      },
+
+      // ==================================
+      // REMOVE ITEM
+      // ==================================
+      removeItem: async (cartItemId) => {
+        set({ isRemoving: true, error: null });
+        try {
+          await cartService.removeFromCart(cartItemId);
+
+          // Refetch cart to get updated totals
+          await get().fetchCart();
+
+          set({ isRemoving: false });
+        } catch (error: any) {
+          console.error('Failed to remove cart item:', error);
+          set({
+            error: error.message || 'Échec de la suppression',
+            isRemoving: false,
+          });
+          throw error;
+        }
+      },
+
+      // ==================================
+      // CLEAR CART
+      // ==================================
+      clearCart: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          await cartService.clearCart();
+
+          set({
+            ...initialState,
+            isLoading: false,
+            lastSync: Date.now(),
+          });
+        } catch (error: any) {
+          console.error('Failed to clear cart:', error);
+          set({
+            error: error.message || 'Échec du vidage du panier',
+            isLoading: false,
+          });
+          throw error;
+        }
+      },
+
+      // ==================================
+      // ERROR MANAGEMENT
+      // ==================================
+      setError: (error) => set({ error }),
+      clearError: () => set({ error: null }),
+
+      // ==================================
+      // SYNC STATUS
+      // ==================================
+      needsSync: () => {
+        const { lastSync } = get();
+        if (!lastSync) return true;
+
+        const FIVE_MINUTES = 5 * 60 * 1000;
+        return Date.now() - lastSync > FIVE_MINUTES;
+      },
+    }),
+    {
+      name: 'yu-card-cart-v2',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        items: state.items,
+        cartId: state.cartId,
+        subtotal: state.subtotal,
+        discount: state.discount,
+        total: state.total,
+        itemsCount: state.itemsCount,
+        lastSync: state.lastSync,
+      }),
+    }
+  )
+);
+
+// ==================================
+// SELECTORS
+// ==================================
+
+export const useCartItems = () => useCartStore((state) => state.items);
+export const useCartTotal = () => useCartStore((state) => state.total);
+export const useCartItemsCount = () => useCartStore((state) => state.itemsCount);
+export const useCartLoading = () => useCartStore((state) => state.isLoading);
+export const useCartError = () => useCartStore((state) => state.error);
+
+export default useCartStore;

@@ -1,0 +1,89 @@
+{
+  "expo": {
+    "name": "yu_card",
+    "slug": "yu_card",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "yucard",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "extra": {
+      "apiUrl": "https://yucard.generale-ci.com",
+      "router": {},
+      "eas": {
+        "projectId": "2ffb1fa5-c2fc-4889-99cd-9e2e47232202"
+      }
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yucard.app",
+      "associatedDomains": [
+        "applinks:app.yucard.generale-ci.com"
+      ]
+    },
+    "android": {
+      "package": "com.yucard.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "app.yucard.generale-ci.com"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#000000"
+          }
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/ubuntu/Ubuntu_300Light.ttf",
+            "node_modules/@expo-google-fonts/ubuntu/Ubuntu_400Regular.ttf",
+            "node_modules/@expo-google-fonts/ubuntu/Ubuntu_500Medium.ttf",
+            "node_modules/@expo-google-fonts/ubuntu/Ubuntu_700Bold.ttf"
+          ]
+        }
+      ],
+      "expo-localization"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "owner": "litekev"
+  }
+}

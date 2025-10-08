@@ -1,0 +1,2418 @@
+/**
+ * Admin Products - Gestion complète des produits (Gift Cards + Produits physiques)
+ * Interface moderne connectée au backend Yu Card
+ */
+
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Modal,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+  Switch,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { Button } from '@/components/ui/Buttons/Button';
+import { FloatingActionButton } from '@/components/ui/Buttons/FloatingActionButton';
+import { GiftCard } from '@/components/ui/Cards/GiftCard';
+import { ProductCard } from '@/components/ui/Cards/ProductCard';
+import { LoadingSpinner } from '@/components/ui/Feedback/LoadingSpinner';
+import { ImageUploadButton } from '@/components/ui/Inputs/ImageUploadButton';
+import { NumberInput } from '@/components/ui/Inputs/NumberInput';
+import { SearchInput } from '@/components/ui/Inputs/SearchInput';
+import { TextInput } from '@/components/ui/Inputs/TextInput';
+import { EmptyState } from '@/components/ui/Layout/EmptyState';
+import { Caption, Paragraph, Title } from '@/components/ui/Typography';
+import { BorderRadius, Colors, Spacing } from '@/constants';
+import { adminCategoriesService } from '@/services/adminCategoriesService';
+import { adminGiftCardsService } from '@/services/adminGiftCardsService';
+import { adminProductsService } from '@/services/adminProductsService';
+import { buildImageUrl, getFirstImageUrl } from '@/services/config';
+import { uploadService, uploadHelpers } from '@/services/uploadService';
+import type { AdminCategory, AdminGiftCard, AdminProduct, CreateGiftCardRequest, CreateProductRequest } from '@/types/admin';
+import type { FileUpload } from '@/types';
+
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = (width - 48) / 2;
+
+// Combined item type pour afficher les deux types ensemble
+interface CombinedAdminItem {
+  id: string;
+  type: 'gift_card' | 'physical_product';
+  data: AdminGiftCard | AdminProduct;
+}
+
+type FilterType = 'all' | 'gift_cards' | 'physical' | 'popular' | 'featured' | 'low_stock';
+type ProductCreationType = 'gift_card' | 'physical_product' | null;
+
+// Form data pour Gift Card
+interface GiftCardFormData {
+  title: string;
+  brand: string;
+  categoryId: string;
+  imageUrl: string;
+  description: string;
+  termsConditions: string;
+  usageInstructions: string;
+  amounts: string[]; // Array de montants (5000, 10000, etc.)
+  validityDays: string;
+  region: string;
+  discountPercentage: string;
+  isPopular: boolean;
+  isFeatured: boolean;
+  isActive: boolean;
+  metaKeywords: string; // Comma separated
+}
+
+// Form data pour Produit Physique
+interface ProductFormData {
+  name: string;
+  brand: string;
+  categoryId: string;
+  images: string[]; // URLs après upload
+  localImages: string[]; // URIs locales avant upload
+  price: string;
+  originalPrice: string;
+  description: string;
+  specifications: { key: string; value: string }[]; // Array of key-value pairs
+  dimensionsLength: string;
+  dimensionsWidth: string;
+  dimensionsHeight: string;
+  weightKg: string;
+  stockQuantity: string;
+  warrantyMonths: string;
+  deliveryTimeDays: string;
+  sku: string;
+  isPopular: boolean;
+  isFeatured: boolean;
+  isActive: boolean;
+  metaKeywords: string; // Comma separated
+}
+
+interface ImageUploadState {
+  uri: string;
+  uploading: boolean;
+  uploaded: boolean;
+  url?: string;
+  error?: string;
+}
+
+export default function AdminProductsScreen() {
+  // State management
+  const [combinedItems, setCombinedItems] = useState<CombinedAdminItem[]>([]);
+  const [categories, setCategories] = useState<AdminCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
+  const [creating, setCreating] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
+
+  // Modal states
+  const [showTypeSelection, setShowTypeSelection] = useState(false);
+
+  // Form states
+  const [giftCardForm, setGiftCardForm] = useState<GiftCardFormData>({
+    title: '',
+    brand: '',
+    categoryId: '',
+    imageUrl: '',
+    description: '',
+    termsConditions: '',
+    usageInstructions: '',
+    amounts: [''],
+    validityDays: '365',
+    region: 'FR',
+    discountPercentage: '0',
+    isPopular: false,
+    isFeatured: false,
+    isActive: true,
+    metaKeywords: '',
+  });
+
+  const [productForm, setProductForm] = useState<ProductFormData>({
+    name: '',
+    brand: '',
+    categoryId: '',
+    images: [],
+    localImages: [],
+    price: '',
+    originalPrice: '',
+    description: '',
+    specifications: [{ key: '', value: '' }],
+    dimensionsLength: '',
+    dimensionsWidth: '',
+    dimensionsHeight: '',
+    weightKg: '',
+    stockQuantity: '0',
+    warrantyMonths: '12',
+    deliveryTimeDays: '3',
+    sku: '',
+    isPopular: false,
+    isFeatured: false,
+    isActive: true,
+    metaKeywords: '',
+  });
+
+  const [imageUploadStates, setImageUploadStates] = useState<ImageUploadState[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+
+  const filterOptions: { key: FilterType; label: string; color: string; icon: string }[] = [
+    { key: 'all', label: 'Tous', color: Colors.text.secondary, icon: 'apps' },
+    { key: 'gift_cards', label: 'Gift Cards', color: '#E91E63', icon: 'gift' },
+    { key: 'physical', label: 'Produits', color: '#2196F3', icon: 'cube' },
+    { key: 'popular', label: 'Populaires', color: '#FF9800', icon: 'star' },
+    { key: 'featured', label: 'Vedettes', color: '#9C27B0', icon: 'flame' },
+    { key: 'low_stock', label: 'Stock faible', color: '#f44336', icon: 'warning' },
+  ];
+
+  // Load data
+  const loadData = useCallback(async (page: number = 1, reset: boolean = false) => {
+    try {
+      if (reset) {
+        setLoading(true);
+      }
+
+      const params: any = {
+        page,
+        limit: 20,
+      };
+
+      if (searchQuery.trim()) {
+        params.search = searchQuery.trim();
+      }
+
+      // Load gift cards and products in parallel
+      const [giftCardsResponse, productsResponse] = await Promise.all([
+        adminGiftCardsService.getAllGiftCards(params),
+        adminProductsService.getAllProducts(params),
+      ]);
+
+      // Combine into single array
+      const combined: CombinedAdminItem[] = [
+        ...(giftCardsResponse.data || []).map(gc => ({
+          id: gc.id,
+          type: 'gift_card' as const,
+          data: gc,
+        })),
+        ...(productsResponse.data || []).map(p => ({
+          id: p.id,
+          type: 'physical_product' as const,
+          data: p,
+        })),
+      ];
+
+      if (reset || page === 1) {
+        setCombinedItems(combined);
+      } else {
+        setCombinedItems(prev => [...prev, ...combined]);
+      }
+
+      setHasMoreData(combined.length === 20);
+      setCurrentPage(page);
+    } catch (error) {
+      console.error('[Products] Error loading data:', error);
+      Alert.alert('Erreur', 'Impossible de charger les données');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [searchQuery]);
+
+  const loadCategories = useCallback(async () => {
+    try {
+      const response = await adminCategoriesService.getAllCategories();
+      setCategories(response || []);
+    } catch (error) {
+      console.error('[Products] Error loading categories:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData(1, true);
+    loadCategories();
+  }, [searchQuery]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setCurrentPage(1);
+    loadData(1, true);
+    loadCategories();
+  }, [loadData, loadCategories]);
+
+  const loadMore = useCallback(() => {
+    if (hasMoreData && !loading) {
+      loadData(currentPage + 1);
+    }
+  }, [hasMoreData, loading, currentPage, loadData]);
+
+  // Filtered items based on selected filter
+  const filteredItems = useMemo(() => {
+    return combinedItems.filter(item => {
+      // Type filter
+      if (selectedFilter === 'gift_cards' && item.type !== 'gift_card') return false;
+      if (selectedFilter === 'physical' && item.type !== 'physical_product') return false;
+
+      // Popular filter
+      if (selectedFilter === 'popular') {
+        if (item.type === 'gift_card') {
+          return (item.data as AdminGiftCard).isPopular;
+        } else {
+          return (item.data as AdminProduct).isPopular;
+        }
+      }
+
+      // Featured filter
+      if (selectedFilter === 'featured') {
+        if (item.type === 'gift_card') {
+          return (item.data as AdminGiftCard).isFeatured;
+        } else {
+          return (item.data as AdminProduct).isFeatured;
+        }
+      }
+
+      // Low stock filter (only for physical products)
+      if (selectedFilter === 'low_stock') {
+        if (item.type === 'physical_product') {
+          return (item.data as AdminProduct).stockQuantity < 10;
+        }
+        return false;
+      }
+
+      return true;
+    });
+  }, [combinedItems, selectedFilter]);
+
+  // Stats calculation
+  const stats = useMemo(() => {
+    const giftCards = combinedItems.filter(i => i.type === 'gift_card');
+    const products = combinedItems.filter(i => i.type === 'physical_product');
+    const lowStock = products.filter(i => (i.data as AdminProduct).stockQuantity < 10);
+    const outOfStock = products.filter(i => (i.data as AdminProduct).stockQuantity === 0);
+
+    return {
+      total: combinedItems.length,
+      giftCards: giftCards.length,
+      physicalProducts: products.length,
+      lowStock: lowStock.length,
+      outOfStock: outOfStock.length,
+    };
+  }, [combinedItems]);
+
+  // Open creation flow
+  const handleCreateClick = () => {
+    setShowTypeSelection(true);
+  };
+
+  const handleTypeSelect = (type: 'gift_card' | 'physical_product') => {
+    setShowTypeSelection(false);
+    router.push(`/admin/product-form?mode=create&type=${type}`);
+  };
+
+  // Reset forms
+  const resetGiftCardForm = () => {
+    setGiftCardForm({
+      title: '',
+      brand: '',
+      categoryId: '',
+      imageUrl: '',
+      description: '',
+      termsConditions: '',
+      usageInstructions: '',
+      amounts: [''],
+      validityDays: '365',
+      region: 'FR',
+      discountPercentage: '0',
+      isPopular: false,
+      isFeatured: false,
+      isActive: true,
+      metaKeywords: '',
+    });
+  };
+
+  const resetProductForm = () => {
+    setProductForm({
+      name: '',
+      brand: '',
+      categoryId: '',
+      images: [],
+      localImages: [],
+      price: '',
+      originalPrice: '',
+      description: '',
+      specifications: [{ key: '', value: '' }],
+      dimensionsLength: '',
+      dimensionsWidth: '',
+      dimensionsHeight: '',
+      weightKg: '',
+      stockQuantity: '0',
+      warrantyMonths: '12',
+      deliveryTimeDays: '3',
+      sku: '',
+      isPopular: false,
+      isFeatured: false,
+      isActive: true,
+      metaKeywords: '',
+    });
+    setImageUploadStates([]);
+    setUploadingImages(false);
+  };
+
+  // Fill forms with existing data for editing
+  const fillGiftCardForm = (giftCard: AdminGiftCard) => {
+    setGiftCardForm({
+      title: giftCard.title || '',
+      brand: giftCard.brand || '',
+      categoryId: giftCard.categoryId || '',
+      imageUrl: giftCard.imageUrl || '',
+      description: giftCard.description || '',
+      termsConditions: giftCard.termsConditions || '',
+      usageInstructions: giftCard.usageInstructions || '',
+      amounts: giftCard.fixedAmounts && giftCard.fixedAmounts.length > 0
+        ? giftCard.fixedAmounts.map(a => String(Number(a) / 100))
+        : [''],
+      validityDays: String(giftCard.validityDays || 365),
+      region: giftCard.region || 'FR',
+      discountPercentage: String(giftCard.discountPercentage || 0),
+      isPopular: giftCard.isPopular || false,
+      isFeatured: giftCard.isFeatured || false,
+      isActive: giftCard.isActive !== false,
+      metaKeywords: Array.isArray(giftCard.metaKeywords) ? giftCard.metaKeywords.join(', ') : '',
+    });
+  };
+
+  const fillProductForm = (product: AdminProduct) => {
+    // Parse specifications
+    let specs: { key: string; value: string }[] = [{ key: '', value: '' }];
+    if (product.specifications) {
+      if (typeof product.specifications === 'object' && !Array.isArray(product.specifications)) {
+        specs = Object.entries(product.specifications).map(([key, value]) => ({
+          key,
+          value: String(value),
+        }));
+      } else if (Array.isArray(product.specifications)) {
+        specs = product.specifications;
+      }
+    }
+
+    // Parse dimensions
+    let dimLength = '', dimWidth = '', dimHeight = '';
+    if (product.dimensionsCm) {
+      const parts = String(product.dimensionsCm).split('x').map(p => p.trim());
+      dimLength = parts[0] || '';
+      dimWidth = parts[1] || '';
+      dimHeight = parts[2] || '';
+    }
+
+    setProductForm({
+      name: product.name || '',
+      brand: product.brand || '',
+      categoryId: product.categoryId || '',
+      images: Array.isArray(product.images) ? product.images : [],
+      localImages: [],
+      price: String(Number(product.price) / 100),
+      originalPrice: product.originalPrice ? String(Number(product.originalPrice) / 100) : '',
+      description: product.description || '',
+      specifications: specs.length > 0 ? specs : [{ key: '', value: '' }],
+      dimensionsLength: dimLength,
+      dimensionsWidth: dimWidth,
+      dimensionsHeight: dimHeight,
+      weightKg: product.weightKg ? String(product.weightKg) : '',
+      stockQuantity: String(product.stockQuantity || 0),
+      warrantyMonths: String(product.warrantyMonths || 12),
+      deliveryTimeDays: String(product.deliveryTimeDays || 3),
+      sku: product.sku || '',
+      isPopular: product.isPopular || false,
+      isFeatured: product.isFeatured || false,
+      isActive: product.isActive !== false,
+      metaKeywords: Array.isArray(product.metaKeywords) ? product.metaKeywords.join(', ') : '',
+    });
+  };
+
+  // Handle edit click
+  const handleEditItem = (item: CombinedAdminItem) => {
+    router.push(`/admin/product-form?mode=edit&type=${item.type}&id=${item.id}`);
+  };
+
+  // Handle image picker for products
+  const handlePickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission requise', "Autorisation d'accès aux photos nécessaire");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: true,
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets) {
+      const newLocalImages = result.assets.map(asset => asset.uri);
+
+      // Add to local images
+      setProductForm(prev => ({
+        ...prev,
+        localImages: [...prev.localImages, ...newLocalImages],
+      }));
+
+      // Initialize upload states
+      const newUploadStates: ImageUploadState[] = newLocalImages.map(uri => ({
+        uri,
+        uploading: false,
+        uploaded: false,
+      }));
+
+      setImageUploadStates(prev => [...prev, ...newUploadStates]);
+
+      // Upload images immediately
+      await uploadProductImages(newLocalImages);
+    }
+  };
+
+  // Upload product images to server
+  const uploadProductImages = async (uris: string[]) => {
+    try {
+      setUploadingImages(true);
+
+      for (const uri of uris) {
+        // Update state to uploading
+        setImageUploadStates(prev =>
+          prev.map(state =>
+            state.uri === uri ? { ...state, uploading: true } : state
+          )
+        );
+
+        try {
+          // Create FileUpload object
+          const fileName = uri.split('/').pop() || `image_${Date.now()}.jpg`;
+          const fileUpload: FileUpload = {
+            uri,
+            type: 'image/jpeg',
+            name: fileName,
+          };
+
+          // Upload to server
+          const response = await uploadService.uploadProductImages([fileUpload]);
+
+          if (response.files && response.files.length > 0) {
+            const uploadedUrl = response.files[0].url;
+
+            // Log the uploaded URL
+            console.log('✅ Image uploadée avec succès !');
+            console.log('📸 URL:', uploadedUrl);
+            console.log('📦 Response complète:', JSON.stringify(response, null, 2));
+
+            // Update state to uploaded with URL
+            setImageUploadStates(prev =>
+              prev.map(state =>
+                state.uri === uri
+                  ? { ...state, uploading: false, uploaded: true, url: uploadedUrl }
+                  : state
+              )
+            );
+
+            // Add to product images
+            setProductForm(prev => ({
+              ...prev,
+              images: [...prev.images, uploadedUrl],
+            }));
+          }
+        } catch (error) {
+          console.error('[Upload] Error uploading image:', error);
+
+          // Update state to error
+          setImageUploadStates(prev =>
+            prev.map(state =>
+              state.uri === uri
+                ? { ...state, uploading: false, error: 'Échec de l\'upload' }
+                : state
+            )
+          );
+        }
+      }
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  // Create gift card
+  const handleCreateGiftCard = async () => {
+    if (!giftCardForm.title.trim() || !giftCardForm.categoryId || !giftCardForm.imageUrl) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    try {
+      setCreating(true);
+
+      // Parse amounts and convert to centimes
+      const amounts = giftCardForm.amounts
+        .map(a => parseFloat(a))
+        .filter(a => !isNaN(a) && a > 0)
+        .map(a => Math.round(a * 100));
+
+      if (amounts.length === 0) {
+        Alert.alert('Erreur', 'Veuillez ajouter au moins un montant');
+        return;
+      }
+
+      const data: CreateGiftCardRequest = {
+        title: giftCardForm.title.trim(),
+        brand: giftCardForm.brand.trim(),
+        categoryId: giftCardForm.categoryId,
+        description: giftCardForm.description.trim(),
+        termsConditions: giftCardForm.termsConditions.trim(),
+        usageInstructions: giftCardForm.usageInstructions.trim(),
+        imageUrl: giftCardForm.imageUrl.trim(),
+        minAmount: Math.min(...amounts),
+        maxAmount: Math.max(...amounts),
+        fixedAmounts: amounts,
+        discountPercentage: parseFloat(giftCardForm.discountPercentage) || 0,
+        isPopular: giftCardForm.isPopular,
+        isFeatured: giftCardForm.isFeatured,
+        validityDays: parseInt(giftCardForm.validityDays) || 365,
+        metaKeywords: giftCardForm.metaKeywords.split(',').map(k => k.trim()).filter(k => k),
+      };
+
+      await adminGiftCardsService.createGiftCard(data);
+
+      Alert.alert('Succès', 'Gift card créée avec succès');
+      setShowCreateModal(false);
+      resetGiftCardForm();
+      onRefresh();
+    } catch (error) {
+      console.error('[Products] Error creating gift card:', error);
+      Alert.alert('Erreur', 'Impossible de créer la gift card');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // Create product
+  const handleCreateProduct = async () => {
+    // Detailed validation with specific error messages
+    const missingFields: string[] = [];
+
+    if (!productForm.name.trim()) {
+      missingFields.push('Nom');
+    }
+    if (!productForm.price.trim()) {
+      missingFields.push('Prix');
+    }
+    if (!productForm.categoryId) {
+      missingFields.push('Catégorie');
+    }
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        'Champs manquants',
+        `Veuillez remplir : ${missingFields.join(', ')}`
+      );
+      return;
+    }
+
+    try {
+      setCreating(true);
+
+      // Build specifications object
+      const specs: Record<string, any> = {};
+      productForm.specifications.forEach(spec => {
+        if (spec.key.trim() && spec.value.trim()) {
+          specs[spec.key.trim()] = spec.value.trim();
+        }
+      });
+
+      const data: CreateProductRequest = {
+        name: productForm.name.trim(),
+        brand: productForm.brand.trim(),
+        categoryId: productForm.categoryId,
+        description: productForm.description.trim(),
+        price: Math.round(parseFloat(productForm.price) * 100), // Convert to centimes
+        originalPrice: productForm.originalPrice ? Math.round(parseFloat(productForm.originalPrice) * 100) : undefined,
+        stockQuantity: parseInt(productForm.stockQuantity) || 0,
+        sku: productForm.sku.trim() || `SKU-${Date.now()}`, // Generate SKU if empty
+        images: productForm.images,
+        specifications: Object.keys(specs).length > 0 ? specs : undefined,
+        dimensionsCm: productForm.dimensionsLength && productForm.dimensionsWidth && productForm.dimensionsHeight
+          ? {
+              length: parseFloat(productForm.dimensionsLength),
+              width: parseFloat(productForm.dimensionsWidth),
+              height: parseFloat(productForm.dimensionsHeight),
+            }
+          : undefined,
+        weightKg: productForm.weightKg ? parseFloat(productForm.weightKg) : undefined,
+        warrantyMonths: productForm.warrantyMonths ? parseInt(productForm.warrantyMonths) : undefined,
+        deliveryTimeDays: productForm.deliveryTimeDays ? parseInt(productForm.deliveryTimeDays) : undefined,
+        isPopular: productForm.isPopular,
+        isFeatured: productForm.isFeatured,
+        metaKeywords: productForm.metaKeywords.split(',').map(k => k.trim()).filter(k => k),
+      };
+
+      await adminProductsService.createProduct(data);
+
+      Alert.alert('Succès', 'Produit créé avec succès');
+      setShowCreateModal(false);
+      resetProductForm();
+      onRefresh();
+    } catch (error) {
+      console.error('[Products] Error creating product:', error);
+      Alert.alert('Erreur', 'Impossible de créer le produit');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // Update gift card
+  const handleUpdateGiftCard = async () => {
+    if (!selectedItem || !giftCardForm.title.trim() || !giftCardForm.categoryId || !giftCardForm.imageUrl) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    try {
+      setCreating(true);
+
+      // Parse amounts and convert to centimes
+      const amounts = giftCardForm.amounts
+        .map(a => parseFloat(a))
+        .filter(a => !isNaN(a) && a > 0)
+        .map(a => Math.round(a * 100));
+
+      if (amounts.length === 0) {
+        Alert.alert('Erreur', 'Veuillez ajouter au moins un montant');
+        return;
+      }
+
+      const data: CreateGiftCardRequest = {
+        title: giftCardForm.title.trim(),
+        brand: giftCardForm.brand.trim(),
+        categoryId: giftCardForm.categoryId,
+        description: giftCardForm.description.trim(),
+        termsConditions: giftCardForm.termsConditions.trim(),
+        usageInstructions: giftCardForm.usageInstructions.trim(),
+        imageUrl: giftCardForm.imageUrl.trim(),
+        minAmount: Math.min(...amounts),
+        maxAmount: Math.max(...amounts),
+        fixedAmounts: amounts,
+        discountPercentage: parseFloat(giftCardForm.discountPercentage) || 0,
+        isPopular: giftCardForm.isPopular,
+        isFeatured: giftCardForm.isFeatured,
+        validityDays: parseInt(giftCardForm.validityDays) || 365,
+        metaKeywords: giftCardForm.metaKeywords.split(',').map(k => k.trim()).filter(k => k),
+      };
+
+      await adminGiftCardsService.updateGiftCard(selectedItem.id, data);
+
+      Alert.alert('Succès', 'Gift card mise à jour avec succès');
+      setShowEditModal(false);
+      setSelectedItem(null);
+      resetGiftCardForm();
+      onRefresh();
+    } catch (error) {
+      console.error('[Products] Error updating gift card:', error);
+      Alert.alert('Erreur', 'Impossible de mettre à jour la gift card');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // Update product
+  const handleUpdateProduct = async () => {
+    if (!selectedItem) {
+      Alert.alert('Erreur', 'Aucun produit sélectionné');
+      return;
+    }
+
+    // Detailed validation with specific error messages
+    const missingFields: string[] = [];
+
+    if (!productForm.name.trim()) {
+      missingFields.push('Nom');
+    }
+    if (!productForm.price.trim()) {
+      missingFields.push('Prix');
+    }
+    if (!productForm.categoryId) {
+      missingFields.push('Catégorie');
+    }
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        'Champs manquants',
+        `Veuillez remplir : ${missingFields.join(', ')}`
+      );
+      return;
+    }
+
+    try {
+      setCreating(true);
+
+      // Build specifications object
+      const specs: Record<string, any> = {};
+      productForm.specifications.forEach(spec => {
+        if (spec.key.trim() && spec.value.trim()) {
+          specs[spec.key.trim()] = spec.value.trim();
+        }
+      });
+
+      const data: CreateProductRequest = {
+        name: productForm.name.trim(),
+        brand: productForm.brand.trim(),
+        categoryId: productForm.categoryId,
+        description: productForm.description.trim(),
+        price: Math.round(parseFloat(productForm.price) * 100), // Convert to centimes
+        originalPrice: productForm.originalPrice ? Math.round(parseFloat(productForm.originalPrice) * 100) : undefined,
+        stockQuantity: parseInt(productForm.stockQuantity) || 0,
+        sku: productForm.sku.trim() || `SKU-${Date.now()}`,
+        images: productForm.images,
+        specifications: Object.keys(specs).length > 0 ? specs : undefined,
+        dimensionsCm: productForm.dimensionsLength && productForm.dimensionsWidth && productForm.dimensionsHeight
+          ? {
+              length: parseFloat(productForm.dimensionsLength),
+              width: parseFloat(productForm.dimensionsWidth),
+              height: parseFloat(productForm.dimensionsHeight),
+            }
+          : undefined,
+        weightKg: productForm.weightKg ? parseFloat(productForm.weightKg) : undefined,
+        warrantyMonths: productForm.warrantyMonths ? parseInt(productForm.warrantyMonths) : undefined,
+        deliveryTimeDays: productForm.deliveryTimeDays ? parseInt(productForm.deliveryTimeDays) : undefined,
+        isPopular: productForm.isPopular,
+        isFeatured: productForm.isFeatured,
+        metaKeywords: productForm.metaKeywords.split(',').map(k => k.trim()).filter(k => k),
+      };
+
+      await adminProductsService.updateProduct(selectedItem.id, data);
+
+      Alert.alert('Succès', 'Produit mis à jour avec succès');
+      setShowEditModal(false);
+      setSelectedItem(null);
+      resetProductForm();
+      onRefresh();
+    } catch (error) {
+      console.error('[Products] Error updating product:', error);
+      Alert.alert('Erreur', 'Impossible de mettre à jour le produit');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // Delete item
+  const handleDeleteItem = async (item: CombinedAdminItem) => {
+    const itemName = item.type === 'gift_card'
+      ? (item.data as AdminGiftCard).title
+      : (item.data as AdminProduct).name;
+
+    Alert.alert(
+      'Confirmer la suppression',
+      `Supprimer "${itemName}" ?`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (item.type === 'gift_card') {
+                await adminGiftCardsService.deleteGiftCard(item.id);
+              } else {
+                await adminProductsService.deleteProduct(item.id);
+              }
+              setCombinedItems(prev => prev.filter(i => i.id !== item.id));
+              Alert.alert('Succès', 'Élément supprimé');
+            } catch (error) {
+              console.error('[Products] Error deleting:', error);
+              Alert.alert('Erreur', 'Impossible de supprimer');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const formatCurrency = (amount: number): string => {
+    return `${amount.toLocaleString('fr-FR')} FCFA`;
+  };
+
+  // Render item card
+  const renderItemCard = (item: CombinedAdminItem) => {
+    if (item.type === 'gift_card') {
+      const giftCard = item.data as AdminGiftCard;
+      const imageUrl = buildImageUrl(giftCard.imageUrl);
+
+      // Calculate amount - priority: fixedAmounts[0] > minAmount > maxAmount
+      let amount: number | undefined = undefined;
+      if (giftCard.fixedAmounts && giftCard.fixedAmounts.length > 0) {
+        amount = Number(giftCard.fixedAmounts[0]) / 100;
+      } else if (giftCard.minAmount) {
+        amount = Number(giftCard.minAmount) / 100;
+      } else if (giftCard.maxAmount) {
+        amount = Number(giftCard.maxAmount) / 100;
+      }
+
+      return (
+        <View key={item.id} style={styles.itemCard}>
+          <GiftCard
+            id={giftCard.id}
+            title={giftCard.title}
+            brand={giftCard.brand}
+            image={imageUrl ? { uri: imageUrl } : undefined}
+            amount={amount}
+            currency={giftCard.currency}
+            popular={giftCard.isPopular}
+            discount={Number(giftCard.discountPercentage) || undefined}
+            giftCardData={giftCard as any}
+            onPress={() => {
+              // TODO: Open edit modal
+            }}
+          />
+          <View style={styles.cardActions}>
+            <Pressable
+              style={styles.editButton}
+              onPress={() => handleEditItem(item)}
+            >
+              <Ionicons name="create-outline" size={18} color={Colors.primary} />
+            </Pressable>
+            <Pressable
+              style={styles.deleteButton}
+              onPress={() => handleDeleteItem(item)}
+            >
+              <Ionicons name="trash-outline" size={18} color="#f44336" />
+            </Pressable>
+          </View>
+        </View>
+      );
+    } else {
+      const product = item.data as AdminProduct;
+      const imageUrl = getFirstImageUrl(product.images);
+
+      return (
+        <View key={item.id} style={styles.itemCard}>
+          <ProductCard
+            id={product.id}
+            name={product.name}
+            brand={product.brand}
+            price={Number(product.price) / 100}
+            originalPrice={product.originalPrice ? Number(product.originalPrice) / 100 : undefined}
+            currency="FCFA"
+            image={imageUrl ? { uri: imageUrl } : undefined}
+            inStock={product.stockQuantity > 0}
+            rating={0}
+            reviewCount={0}
+            onPress={() => {
+              // TODO: Open edit modal
+            }}
+          />
+          <View style={styles.cardActions}>
+            <Pressable
+              style={styles.editButton}
+              onPress={() => handleEditItem(item)}
+            >
+              <Ionicons name="create-outline" size={18} color={Colors.primary} />
+            </Pressable>
+            <Pressable
+              style={styles.deleteButton}
+              onPress={() => handleDeleteItem(item)}
+            >
+              <Ionicons name="trash-outline" size={18} color="#f44336" />
+            </Pressable>
+          </View>
+        </View>
+      );
+    }
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.loadingContainer}>
+          <LoadingSpinner size="large" />
+          <Paragraph style={styles.loadingText}>Chargement...</Paragraph>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Get filtered categories based on product type
+  const getFilteredCategories = () => {
+    if (productCreationType === 'gift_card') {
+      return categories.filter(c => c.type === 'GIFT_CARD' || c.type === 'BOTH');
+    } else if (productCreationType === 'physical_product') {
+      return categories.filter(c => c.type === 'PHYSICAL_PRODUCT' || c.type === 'BOTH');
+    }
+    return categories;
+  };
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Colors.primary}
+            colors={[Colors.primary]}
+          />
+        }
+        onScroll={({ nativeEvent }) => {
+          const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+          const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+          if (isCloseToBottom && hasMoreData && !loading) {
+            loadMore();
+          }
+        }}
+        scrollEventThrottle={400}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Title level={2} style={styles.headerTitle}>Produits</Title>
+          <Paragraph color="secondary" style={styles.headerSubtitle}>
+            {filteredItems.length} élément{filteredItems.length > 1 ? 's' : ''}
+          </Paragraph>
+        </View>
+
+        {/* Stats Grid */}
+        <View style={styles.statsGrid}>
+          <View style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.statGradient}>
+              <View style={styles.statIconContainer}>
+                <Ionicons name="apps" size={20} color={Colors.white} />
+              </View>
+              <Title level={5} style={styles.statValue}>{stats.total}</Title>
+              <Caption style={styles.statLabel}>Total</Caption>
+            </LinearGradient>
+          </View>
+
+          <View style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <LinearGradient colors={['#E91E63', '#C2185B']} style={styles.statGradient}>
+              <View style={styles.statIconContainer}>
+                <Ionicons name="gift" size={20} color={Colors.white} />
+              </View>
+              <Title level={5} style={styles.statValue}>{stats.giftCards}</Title>
+              <Caption style={styles.statLabel}>Gift Cards</Caption>
+            </LinearGradient>
+          </View>
+
+          <View style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.statGradient}>
+              <View style={styles.statIconContainer}>
+                <Ionicons name="cube" size={20} color={Colors.white} />
+              </View>
+              <Title level={5} style={styles.statValue}>{stats.physicalProducts}</Title>
+              <Caption style={styles.statLabel}>Produits</Caption>
+            </LinearGradient>
+          </View>
+
+          <View style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.statGradient}>
+              <View style={styles.statIconContainer}>
+                <Ionicons name="warning" size={20} color={Colors.white} />
+              </View>
+              <Title level={5} style={styles.statValue}>{stats.lowStock}</Title>
+              <Caption style={styles.statLabel}>Stock faible</Caption>
+            </LinearGradient>
+          </View>
+        </View>
+
+        {/* Search */}
+        <View style={styles.searchContainer}>
+          <SearchInput
+            placeholder="Rechercher..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+
+        {/* Filters */}
+        <View style={styles.filtersContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {filterOptions.map((filter) => (
+              <Pressable
+                key={filter.key}
+                style={[
+                  styles.filterButton,
+                  selectedFilter === filter.key && {
+                    backgroundColor: filter.color,
+                  },
+                ]}
+                onPress={() => setSelectedFilter(filter.key)}
+              >
+                <Ionicons
+                  name={filter.icon as any}
+                  size={16}
+                  color={selectedFilter === filter.key ? Colors.white : Colors.text.secondary}
+                  style={{ marginRight: 4 }}
+                />
+                <Paragraph
+                  size="small"
+                  style={[
+                    styles.filterText,
+                    selectedFilter === filter.key && styles.filterTextActive,
+                  ]}
+                >
+                  {filter.label}
+                </Paragraph>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Items Grid */}
+        <View style={styles.itemsContainer}>
+          {filteredItems.length > 0 ? (
+            <View style={styles.itemsGrid}>
+              {filteredItems.map(renderItemCard)}
+            </View>
+          ) : (
+            <EmptyState
+              title="Aucun élément"
+              description="Aucun élément ne correspond à vos critères"
+              icon="cube-outline"
+            />
+          )}
+        </View>
+
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+
+      {/* FAB */}
+      <FloatingActionButton
+        icon="add"
+        color={Colors.primary}
+        onPress={handleCreateClick}
+      />
+
+      {/* Type Selection Modal */}
+      <Modal
+        visible={showTypeSelection}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowTypeSelection(false)}
+      >
+        <SafeAreaView style={styles.modalContainer} edges={['top']}>
+          <View style={styles.modalHeader}>
+            <Title level={3}>Quel type de produit ?</Title>
+            <Pressable onPress={() => setShowTypeSelection(false)}>
+              <Ionicons name="close" size={24} color={Colors.text.primary} />
+            </Pressable>
+          </View>
+
+          <View style={styles.typeSelectionContainer}>
+            <Pressable
+              style={styles.typeCard}
+              onPress={() => handleTypeSelect('gift_card')}
+            >
+              <LinearGradient colors={['#E91E63', '#C2185B']} style={styles.typeGradient}>
+                <Ionicons name="gift" size={48} color={Colors.white} />
+                <Title level={4} style={styles.typeTitle}>Gift Card</Title>
+                <Caption style={styles.typeDescription}>
+                  Carte cadeau numérique avec codes
+                </Caption>
+              </LinearGradient>
+            </Pressable>
+
+            <Pressable
+              style={styles.typeCard}
+              onPress={() => handleTypeSelect('physical_product')}
+            >
+              <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.typeGradient}>
+                <Ionicons name="cube" size={48} color={Colors.white} />
+                <Title level={4} style={styles.typeTitle}>Produit Physique</Title>
+                <Caption style={styles.typeDescription}>
+                  Électronique, accessoires, etc.
+                </Caption>
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background.primary,
+  },
+
+  loadingContainer: {
+          animationType="slide"
+          presentationStyle="fullScreen"
+          onRequestClose={() => {
+            setShowCreateModal(false);
+            resetGiftCardForm();
+          }}
+        >
+          <SafeAreaView style={styles.modalContainer} edges={['top']}>
+            <View style={styles.modalHeader}>
+              <Title level={3}>Nouvelle Gift Card</Title>
+              <Pressable
+                onPress={() => {
+                  setShowCreateModal(false);
+                  resetGiftCardForm();
+                }}
+              >
+                <Ionicons name="close" size={24} color={Colors.text.primary} />
+              </Pressable>
+            </View>
+
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              <TextInput
+                label="Titre *"
+                value={giftCardForm.title}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, title: text })}
+                placeholder="Ex: Carte PlayStation 50€"
+              />
+
+              <TextInput
+                label="Marque *"
+                value={giftCardForm.brand}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, brand: text })}
+                placeholder="Ex: Sony"
+              />
+
+              <TextInput
+                label="URL de l'image *"
+                value={giftCardForm.imageUrl}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, imageUrl: text })}
+                placeholder="https://..."
+              />
+
+              {/* Category Selector */}
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Catégorie *</Caption>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {getFilteredCategories().map((category) => (
+                    <Pressable
+                      key={category.id}
+                      style={[
+                        styles.categoryChip,
+                        giftCardForm.categoryId === category.id && styles.categoryChipSelected,
+                      ]}
+                      onPress={() => setGiftCardForm({ ...giftCardForm, categoryId: category.id })}
+                    >
+                      <Paragraph
+                        size="small"
+                        style={[
+                          styles.categoryChipText,
+                          giftCardForm.categoryId === category.id && styles.categoryChipTextSelected,
+                        ]}
+                      >
+                        {category.name}
+                      </Paragraph>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <TextInput
+                label="Description *"
+                value={giftCardForm.description}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, description: text })}
+                placeholder="Description de la gift card..."
+                multiline
+                numberOfLines={6}
+              />
+
+              <TextInput
+                label="Conditions d'utilisation"
+                value={giftCardForm.termsConditions}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, termsConditions: text })}
+                placeholder="Conditions..."
+                multiline
+                numberOfLines={4}
+              />
+
+              <TextInput
+                label="Instructions d'utilisation"
+                value={giftCardForm.usageInstructions}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, usageInstructions: text })}
+                placeholder="Instructions..."
+                multiline
+                numberOfLines={4}
+              />
+
+              {/* Amounts */}
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Montants disponibles (FCFA) *</Caption>
+                {giftCardForm.amounts.map((amount, index) => (
+                  <View key={index} style={styles.amountRow}>
+                    <View style={{ flex: 1 }}>
+                      <NumberInput
+                        value={amount ? parseFloat(amount) : undefined}
+                        onValueChange={(value) => {
+                          const newAmounts = [...giftCardForm.amounts];
+                          newAmounts[index] = value.toString();
+                          setGiftCardForm({ ...giftCardForm, amounts: newAmounts });
+                        }}
+                        placeholder="Ex: 5000"
+                      />
+                    </View>
+                    {giftCardForm.amounts.length > 1 && (
+                      <Pressable
+                        onPress={() => {
+                          const newAmounts = giftCardForm.amounts.filter((_, i) => i !== index);
+                          setGiftCardForm({ ...giftCardForm, amounts: newAmounts });
+                        }}
+                        style={styles.removeButton}
+                      >
+                        <Ionicons name="close-circle" size={24} color="#f44336" />
+                      </Pressable>
+                    )}
+                  </View>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={() => setGiftCardForm({ ...giftCardForm, amounts: [...giftCardForm.amounts, ''] })}
+                >
+                  + Ajouter un montant
+                </Button>
+              </View>
+
+              <NumberInput
+                label="Validité (jours)"
+                value={giftCardForm.validityDays ? parseFloat(giftCardForm.validityDays) : undefined}
+                onValueChange={(value) => setGiftCardForm({ ...giftCardForm, validityDays: value.toString() })}
+                placeholder="365"
+              />
+
+              <TextInput
+                label="Région"
+                value={giftCardForm.region}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, region: text })}
+                placeholder="FR, US, UK..."
+              />
+
+              <NumberInput
+                label="Réduction (%)"
+                value={giftCardForm.discountPercentage ? parseFloat(giftCardForm.discountPercentage) : undefined}
+                onValueChange={(value) => setGiftCardForm({ ...giftCardForm, discountPercentage: value.toString() })}
+                placeholder="0"
+                max={100}
+              />
+
+              <TextInput
+                label="Mots-clés SEO (séparés par des virgules)"
+                value={giftCardForm.metaKeywords}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, metaKeywords: text })}
+                placeholder="playstation, gaming, gift"
+              />
+
+              {/* Toggles */}
+              <View style={styles.toggleContainer}>
+                <View style={styles.toggleRow}>
+                  <Paragraph>Populaire</Paragraph>
+                  <Switch
+                    value={giftCardForm.isPopular}
+                    onValueChange={(value) => setGiftCardForm({ ...giftCardForm, isPopular: value })}
+                    trackColor={{ false: Colors.gray[300], true: Colors.primary }}
+                  />
+                </View>
+                <View style={styles.toggleRow}>
+                  <Paragraph>En vedette</Paragraph>
+                  <Switch
+                    value={giftCardForm.isFeatured}
+                    onValueChange={(value) => setGiftCardForm({ ...giftCardForm, isFeatured: value })}
+                    trackColor={{ false: Colors.gray[300], true: Colors.primary }}
+                  />
+                </View>
+                <View style={styles.toggleRow}>
+                  <Paragraph>Actif</Paragraph>
+                  <Switch
+                    value={giftCardForm.isActive}
+                    onValueChange={(value) => setGiftCardForm({ ...giftCardForm, isActive: value })}
+                    trackColor={{ false: Colors.gray[300], true: Colors.primary }}
+                  />
+                </View>
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalActions}>
+              <Button
+                variant="outline"
+                onPress={() => {
+                  setShowCreateModal(false);
+                  resetGiftCardForm();
+                }}
+                style={styles.modalButton}
+                disabled={creating}
+              >
+                Annuler
+              </Button>
+              <Button
+                variant="primary"
+                onPress={handleCreateGiftCard}
+                style={styles.modalButton}
+                loading={creating}
+                disabled={creating}
+              >
+                Créer
+              </Button>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
+
+      {/* Create/Edit Modal - Physical Product */}
+      {productCreationType === 'physical_product' && (
+        <Modal
+          visible={showCreateModal}
+          animationType="slide"
+          presentationStyle="fullScreen"
+          onRequestClose={() => {
+            setShowCreateModal(false);
+            resetProductForm();
+          }}
+        >
+          <SafeAreaView style={styles.modalContainer} edges={['top']}>
+            <View style={styles.modalHeader}>
+              <Title level={3}>Nouveau Produit</Title>
+              <Pressable
+                onPress={() => {
+                  setShowCreateModal(false);
+                  resetProductForm();
+                }}
+              >
+                <Ionicons name="close" size={24} color={Colors.text.primary} />
+              </Pressable>
+            </View>
+
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              <TextInput
+                label="Nom du produit *"
+                value={productForm.name}
+                onChangeText={(text) => setProductForm({ ...productForm, name: text })}
+                placeholder="Ex: iPhone 15 Pro Max"
+              />
+
+              <TextInput
+                label="Marque *"
+                value={productForm.brand}
+                onChangeText={(text) => setProductForm({ ...productForm, brand: text })}
+                placeholder="Ex: Apple"
+              />
+
+              {/* Category Selector */}
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Catégorie *</Caption>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {getFilteredCategories().map((category) => (
+                    <Pressable
+                      key={category.id}
+                      style={[
+                        styles.categoryChip,
+                        productForm.categoryId === category.id && styles.categoryChipSelected,
+                      ]}
+                      onPress={() => setProductForm({ ...productForm, categoryId: category.id })}
+                    >
+                      <Paragraph
+                        size="small"
+                        style={[
+                          styles.categoryChipText,
+                          productForm.categoryId === category.id && styles.categoryChipTextSelected,
+                        ]}
+                      >
+                        {category.name}
+                      </Paragraph>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <NumberInput
+                label="Prix (FCFA) *"
+                value={productForm.price ? parseFloat(productForm.price) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, price: value.toString() })}
+                placeholder="0"
+              />
+
+              <NumberInput
+                label="Prix original (FCFA)"
+                value={productForm.originalPrice ? parseFloat(productForm.originalPrice) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, originalPrice: value.toString() })}
+                placeholder="0"
+              />
+
+              <TextInput
+                label="Description *"
+                value={productForm.description}
+                onChangeText={(text) => setProductForm({ ...productForm, description: text })}
+                placeholder="Description du produit..."
+                multiline
+                numberOfLines={8}
+              />
+
+              {/* Specifications */}
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Spécifications techniques</Caption>
+                {productForm.specifications.map((spec, index) => (
+                  <View key={index} style={styles.specRow}>
+                    <View style={{ flex: 1, marginRight: 8 }}>
+                      <TextInput
+                        value={spec.key}
+                        onChangeText={(text) => {
+                          const newSpecs = [...productForm.specifications];
+                          newSpecs[index].key = text;
+                          setProductForm({ ...productForm, specifications: newSpecs });
+                        }}
+                        placeholder="Clé (ex: Processeur)"
+                      />
+                    </View>
+                    <View style={{ flex: 1, marginRight: 8 }}>
+                      <TextInput
+                        value={spec.value}
+                        onChangeText={(text) => {
+                          const newSpecs = [...productForm.specifications];
+                          newSpecs[index].value = text;
+                          setProductForm({ ...productForm, specifications: newSpecs });
+                        }}
+                        placeholder="Valeur (ex: A17 Pro)"
+                      />
+                    </View>
+                    {productForm.specifications.length > 1 && (
+                      <Pressable
+                        onPress={() => {
+                          const newSpecs = productForm.specifications.filter((_, i) => i !== index);
+                          setProductForm({ ...productForm, specifications: newSpecs });
+                        }}
+                        style={styles.removeButton}
+                      >
+                        <Ionicons name="close-circle" size={24} color="#f44336" />
+                      </Pressable>
+                    )}
+                  </View>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={() =>
+                    setProductForm({
+                      ...productForm,
+                      specifications: [...productForm.specifications, { key: '', value: '' }],
+                    })
+                  }
+                >
+                  + Ajouter une spec
+                </Button>
+              </View>
+
+              {/* Dimensions */}
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Dimensions (cm)</Caption>
+                <View style={styles.dimensionsRow}>
+                  <View style={{ flex: 1 }}>
+                    <NumberInput
+                      value={productForm.dimensionsLength ? parseFloat(productForm.dimensionsLength) : undefined}
+                      onValueChange={(value) => setProductForm({ ...productForm, dimensionsLength: value.toString() })}
+                      placeholder="Longueur"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <NumberInput
+                      value={productForm.dimensionsWidth ? parseFloat(productForm.dimensionsWidth) : undefined}
+                      onValueChange={(value) => setProductForm({ ...productForm, dimensionsWidth: value.toString() })}
+                      placeholder="Largeur"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <NumberInput
+                      value={productForm.dimensionsHeight ? parseFloat(productForm.dimensionsHeight) : undefined}
+                      onValueChange={(value) => setProductForm({ ...productForm, dimensionsHeight: value.toString() })}
+                      placeholder="Hauteur"
+                    />
+                  </View>
+                </View>
+              </View>
+
+              <NumberInput
+                label="Poids (kg)"
+                value={productForm.weightKg ? parseFloat(productForm.weightKg) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, weightKg: value.toString() })}
+                placeholder="0.5"
+                decimalPlaces={2}
+              />
+
+              <NumberInput
+                label="Stock *"
+                value={productForm.stockQuantity ? parseFloat(productForm.stockQuantity) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, stockQuantity: value.toString() })}
+                placeholder="0"
+              />
+
+              <NumberInput
+                label="Garantie (mois)"
+                value={productForm.warrantyMonths ? parseFloat(productForm.warrantyMonths) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, warrantyMonths: value.toString() })}
+                placeholder="12"
+              />
+
+              <NumberInput
+                label="Délai de livraison (jours)"
+                value={productForm.deliveryTimeDays ? parseFloat(productForm.deliveryTimeDays) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, deliveryTimeDays: value.toString() })}
+                placeholder="3"
+              />
+
+              <TextInput
+                label="SKU (auto-généré si vide)"
+                value={productForm.sku}
+                onChangeText={(text) => setProductForm({ ...productForm, sku: text })}
+                placeholder="SKU-12345"
+              />
+
+              {/* Images */}
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Images</Caption>
+                {uploadingImages && (
+                  <Caption color="secondary" style={{ marginBottom: Spacing.xs }}>
+                    Upload en cours...
+                  </Caption>
+                )}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {imageUploadStates.map((imageState, index) => (
+                    <View key={index} style={styles.imagePreview}>
+                      <Image source={{ uri: imageState.uri }} style={styles.previewImage} />
+
+                      {/* Upload status overlay */}
+                      {imageState.uploading && (
+                        <View style={styles.uploadOverlay}>
+                          <LoadingSpinner size="small" color={Colors.white} />
+                        </View>
+                      )}
+
+                      {imageState.uploaded && (
+                        <View style={styles.uploadSuccessOverlay}>
+                          <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+                        </View>
+                      )}
+
+                      {imageState.error && (
+                        <View style={styles.uploadErrorOverlay}>
+                          <Ionicons name="alert-circle" size={24} color="#f44336" />
+                        </View>
+                      )}
+
+                      {/* Remove button - only show if uploaded */}
+                      {imageState.uploaded && (
+                        <Pressable
+                          style={styles.removeImageButton}
+                          onPress={() => {
+                            // Remove from both arrays
+                            const urlToRemove = imageState.url;
+                            setProductForm(prev => ({
+                              ...prev,
+                              images: prev.images.filter(img => img !== urlToRemove),
+                              localImages: prev.localImages.filter((_, i) => i !== index),
+                            }));
+                            setImageUploadStates(prev => prev.filter((_, i) => i !== index));
+                          }}
+                        >
+                          <Ionicons name="close-circle" size={24} color="#f44336" />
+                        </Pressable>
+                      )}
+                    </View>
+                  ))}
+
+                  <Pressable
+                    style={styles.addImageButton}
+                    onPress={handlePickImage}
+                    disabled={uploadingImages}
+                  >
+                    <Ionicons
+                      name="add"
+                      size={32}
+                      color={uploadingImages ? Colors.gray[400] : Colors.primary}
+                    />
+                  </Pressable>
+                </ScrollView>
+              </View>
+
+              <TextInput
+                label="Mots-clés SEO (séparés par des virgules)"
+                value={productForm.metaKeywords}
+                onChangeText={(text) => setProductForm({ ...productForm, metaKeywords: text })}
+                placeholder="smartphone, apple, iphone"
+              />
+
+              {/* Toggles */}
+              <View style={styles.toggleContainer}>
+                <View style={styles.toggleRow}>
+                  <Paragraph>Populaire</Paragraph>
+                  <Switch
+                    value={productForm.isPopular}
+                    onValueChange={(value) => setProductForm({ ...productForm, isPopular: value })}
+                    trackColor={{ false: Colors.gray[300], true: Colors.primary }}
+                  />
+                </View>
+                <View style={styles.toggleRow}>
+                  <Paragraph>En vedette</Paragraph>
+                  <Switch
+                    value={productForm.isFeatured}
+                    onValueChange={(value) => setProductForm({ ...productForm, isFeatured: value })}
+                    trackColor={{ false: Colors.gray[300], true: Colors.primary }}
+                  />
+                </View>
+                <View style={styles.toggleRow}>
+                  <Paragraph>Actif</Paragraph>
+                  <Switch
+                    value={productForm.isActive}
+                    onValueChange={(value) => setProductForm({ ...productForm, isActive: value })}
+                    trackColor={{ false: Colors.gray[300], true: Colors.primary }}
+                  />
+                </View>
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalActions}>
+              <Button
+                variant="outline"
+                onPress={() => {
+                  setShowCreateModal(false);
+                  resetProductForm();
+                }}
+                style={styles.modalButton}
+                disabled={creating}
+              >
+                Annuler
+              </Button>
+              <Button
+                variant="primary"
+                onPress={handleCreateProduct}
+                style={styles.modalButton}
+                loading={creating}
+                disabled={creating}
+              >
+                Créer
+              </Button>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
+
+      {/* Edit Modal - Same as Create but with different title and handlers */}
+      {showEditModal && productCreationType === 'gift_card' && (
+        <Modal
+          visible={showEditModal}
+          animationType="slide"
+          presentationStyle="fullScreen"
+          onRequestClose={() => {
+            setShowEditModal(false);
+            setSelectedItem(null);
+            resetGiftCardForm();
+          }}
+        >
+          <SafeAreaView style={styles.modalContainer} edges={['top']}>
+            <View style={styles.modalHeader}>
+              <Title level={3}>Modifier Gift Card</Title>
+              <Pressable
+                onPress={() => {
+                  setShowEditModal(false);
+                  setSelectedItem(null);
+                  resetGiftCardForm();
+                }}
+              >
+                <Ionicons name="close" size={24} color={Colors.text.primary} />
+              </Pressable>
+            </View>
+
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              {/* Same form fields as create modal */}
+              <TextInput
+                label="Titre *"
+                value={giftCardForm.title}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, title: text })}
+                placeholder="Ex: Carte PlayStation 50€"
+              />
+
+              <TextInput
+                label="Marque *"
+                value={giftCardForm.brand}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, brand: text })}
+                placeholder="Ex: PlayStation"
+              />
+
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Catégorie *</Caption>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {categories.map(cat => (
+                    <Pressable
+                      key={cat.id}
+                      style={[
+                        styles.categoryChip,
+                        giftCardForm.categoryId === cat.id && styles.categoryChipActive,
+                      ]}
+                      onPress={() => setGiftCardForm({ ...giftCardForm, categoryId: cat.id })}
+                    >
+                      <Caption
+                        style={[
+                          styles.categoryChipText,
+                          giftCardForm.categoryId === cat.id && styles.categoryChipTextActive,
+                        ]}
+                      >
+                        {cat.name}
+                      </Caption>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <TextInput
+                label="URL Image *"
+                value={giftCardForm.imageUrl}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, imageUrl: text })}
+                placeholder="https://..."
+              />
+
+              <TextInput
+                label="Description *"
+                value={giftCardForm.description}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, description: text })}
+                multiline
+                numberOfLines={3}
+              />
+
+              <TextInput
+                label="Conditions d'utilisation"
+                value={giftCardForm.termsConditions}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, termsConditions: text })}
+                multiline
+                numberOfLines={3}
+              />
+
+              <TextInput
+                label="Instructions d'utilisation"
+                value={giftCardForm.usageInstructions}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, usageInstructions: text })}
+                multiline
+                numberOfLines={3}
+              />
+
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Montants disponibles (FCFA) *</Caption>
+                {giftCardForm.amounts.map((amount, index) => (
+                  <View key={index} style={styles.amountRow}>
+                    <TextInput
+                      value={amount}
+                      onChangeText={(text) => {
+                        const newAmounts = [...giftCardForm.amounts];
+                        newAmounts[index] = text;
+                        setGiftCardForm({ ...giftCardForm, amounts: newAmounts });
+                      }}
+                      placeholder="Ex: 5000"
+                      keyboardType="numeric"
+                      style={{ flex: 1 }}
+                    />
+                    {giftCardForm.amounts.length > 1 && (
+                      <Pressable
+                        onPress={() => {
+                          const newAmounts = giftCardForm.amounts.filter((_, i) => i !== index);
+                          setGiftCardForm({ ...giftCardForm, amounts: newAmounts });
+                        }}
+                        style={styles.removeButton}
+                      >
+                        <Ionicons name="trash-outline" size={20} color="#f44336" />
+                      </Pressable>
+                    )}
+                  </View>
+                ))}
+                <Pressable
+                  onPress={() => setGiftCardForm({ ...giftCardForm, amounts: [...giftCardForm.amounts, ''] })}
+                  style={styles.addButton}
+                >
+                  <Ionicons name="add-circle-outline" size={20} color={Colors.primary} />
+                  <Caption color="accent">Ajouter un montant</Caption>
+                </Pressable>
+              </View>
+
+              <NumberInput
+                label="Validité (jours)"
+                value={giftCardForm.validityDays ? parseFloat(giftCardForm.validityDays) : undefined}
+                onValueChange={(value) => setGiftCardForm({ ...giftCardForm, validityDays: value.toString() })}
+                placeholder="365"
+              />
+
+              <NumberInput
+                label="Réduction (%)"
+                value={giftCardForm.discountPercentage ? parseFloat(giftCardForm.discountPercentage) : undefined}
+                onValueChange={(value) => setGiftCardForm({ ...giftCardForm, discountPercentage: value.toString() })}
+                placeholder="0"
+              />
+
+              <TextInput
+                label="Mots-clés (séparés par des virgules)"
+                value={giftCardForm.metaKeywords}
+                onChangeText={(text) => setGiftCardForm({ ...giftCardForm, metaKeywords: text })}
+                placeholder="gaming, playstation, jeux"
+              />
+
+              <View style={styles.switchContainer}>
+                <Paragraph>Populaire</Paragraph>
+                <Switch
+                  value={giftCardForm.isPopular}
+                  onValueChange={(value) => setGiftCardForm({ ...giftCardForm, isPopular: value })}
+                  trackColor={{ true: Colors.primary }}
+                />
+              </View>
+
+              <View style={styles.switchContainer}>
+                <Paragraph>À la une</Paragraph>
+                <Switch
+                  value={giftCardForm.isFeatured}
+                  onValueChange={(value) => setGiftCardForm({ ...giftCardForm, isFeatured: value })}
+                  trackColor={{ true: Colors.primary }}
+                />
+              </View>
+
+              <View style={styles.switchContainer}>
+                <Paragraph>Actif</Paragraph>
+                <Switch
+                  value={giftCardForm.isActive}
+                  onValueChange={(value) => setGiftCardForm({ ...giftCardForm, isActive: value })}
+                  trackColor={{ true: Colors.primary }}
+                />
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <Button
+                variant="primary"
+                onPress={handleUpdateGiftCard}
+                style={styles.modalButton}
+                loading={creating}
+                disabled={creating}
+              >
+                Mettre à jour
+              </Button>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
+
+      {showEditModal && productCreationType === 'physical_product' && (
+        <Modal
+          visible={showEditModal}
+          animationType="slide"
+          presentationStyle="fullScreen"
+          onRequestClose={() => {
+            setShowEditModal(false);
+            setSelectedItem(null);
+            resetProductForm();
+          }}
+        >
+          <SafeAreaView style={styles.modalContainer} edges={['top']}>
+            <View style={styles.modalHeader}>
+              <Title level={3}>Modifier Produit</Title>
+              <Pressable
+                onPress={() => {
+                  setShowEditModal(false);
+                  setSelectedItem(null);
+                  resetProductForm();
+                }}
+              >
+                <Ionicons name="close" size={24} color={Colors.text.primary} />
+              </Pressable>
+            </View>
+
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              {/* Product form - note: For simplicity, showing key fields only */}
+              <TextInput
+                label="Nom *"
+                value={productForm.name}
+                onChangeText={(text) => setProductForm({ ...productForm, name: text })}
+                placeholder="Ex: Samsung Galaxy S24"
+              />
+
+              <TextInput
+                label="Marque"
+                value={productForm.brand}
+                onChangeText={(text) => setProductForm({ ...productForm, brand: text })}
+                placeholder="Ex: Samsung"
+              />
+
+              <View style={styles.fieldContainer}>
+                <Caption style={styles.fieldLabel}>Catégorie *</Caption>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {categories.filter(cat => cat.type === 'PHYSICAL_PRODUCT' || cat.type === 'BOTH').map(cat => (
+                    <Pressable
+                      key={cat.id}
+                      style={[
+                        styles.categoryChip,
+                        productForm.categoryId === cat.id && styles.categoryChipActive,
+                      ]}
+                      onPress={() => setProductForm({ ...productForm, categoryId: cat.id })}
+                    >
+                      <Caption
+                        style={[
+                          styles.categoryChipText,
+                          productForm.categoryId === cat.id && styles.categoryChipTextActive,
+                        ]}
+                      >
+                        {cat.name}
+                      </Caption>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <NumberInput
+                label="Prix (FCFA) *"
+                value={productForm.price ? parseFloat(productForm.price) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, price: value.toString() })}
+                placeholder="Ex: 500000"
+              />
+
+              <NumberInput
+                label="Prix original (FCFA)"
+                value={productForm.originalPrice ? parseFloat(productForm.originalPrice) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, originalPrice: value.toString() })}
+                placeholder="Ex: 600000"
+              />
+
+              <NumberInput
+                label="Stock *"
+                value={productForm.stockQuantity ? parseFloat(productForm.stockQuantity) : undefined}
+                onValueChange={(value) => setProductForm({ ...productForm, stockQuantity: value.toString() })}
+                placeholder="Ex: 10"
+              />
+
+              <TextInput
+                label="Description"
+                value={productForm.description}
+                onChangeText={(text) => setProductForm({ ...productForm, description: text })}
+                multiline
+                numberOfLines={3}
+              />
+
+              <TextInput
+                label="SKU"
+                value={productForm.sku}
+                onChangeText={(text) => setProductForm({ ...productForm, sku: text })}
+                placeholder="SKU-12345"
+              />
+
+              <Caption style={{ marginTop: Spacing.lg, marginBottom: Spacing.sm }}>
+                Pour modifier les images, supprimez ce produit et recréez-le avec les nouvelles images.
+              </Caption>
+
+              <TextInput
+                label="Mots-clés (séparés par des virgules)"
+                value={productForm.metaKeywords}
+                onChangeText={(text) => setProductForm({ ...productForm, metaKeywords: text })}
+                placeholder="smartphone, android, 5g"
+              />
+
+              <View style={styles.switchContainer}>
+                <Paragraph>Populaire</Paragraph>
+                <Switch
+                  value={productForm.isPopular}
+                  onValueChange={(value) => setProductForm({ ...productForm, isPopular: value })}
+                  trackColor={{ true: Colors.primary }}
+                />
+              </View>
+
+              <View style={styles.switchContainer}>
+                <Paragraph>À la une</Paragraph>
+                <Switch
+                  value={productForm.isFeatured}
+                  onValueChange={(value) => setProductForm({ ...productForm, isFeatured: value })}
+                  trackColor={{ true: Colors.primary }}
+                />
+              </View>
+
+              <View style={styles.switchContainer}>
+                <Paragraph>Actif</Paragraph>
+                <Switch
+                  value={productForm.isActive}
+                  onValueChange={(value) => setProductForm({ ...productForm, isActive: value })}
+                  trackColor={{ true: Colors.primary }}
+                />
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <Button
+                variant="primary"
+                onPress={handleUpdateProduct}
+                style={styles.modalButton}
+                loading={creating}
+                disabled={creating}
+              >
+                Mettre à jour
+              </Button>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background.primary,
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: Spacing['2xl'],
+  },
+
+  loadingText: {
+    marginTop: Spacing.md,
+    color: Colors.text.secondary,
+  },
+
+  header: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+
+  headerTitle: {
+    fontFamily: 'Ubuntu_700Bold',
+    color: Colors.text.primary,
+    marginBottom: Spacing.xs,
+  },
+
+  headerSubtitle: {
+    fontFamily: 'Ubuntu_400Regular',
+    fontSize: 14,
+  },
+
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+
+  statCard: {
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+  },
+
+  statGradient: {
+    padding: Spacing.md,
+    minHeight: 110,
+  },
+
+  statIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+
+  statValue: {
+    fontFamily: 'Ubuntu_700Bold',
+    color: Colors.white,
+    fontSize: 18,
+    marginBottom: 2,
+  },
+
+  statLabel: {
+    fontFamily: 'Ubuntu_400Regular',
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 11,
+  },
+
+  searchContainer: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+
+  filtersContainer: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.background.secondary,
+    marginRight: Spacing.sm,
+  },
+
+  filterText: {
+    fontFamily: 'Ubuntu_500Medium',
+    color: Colors.text.secondary,
+  },
+
+  filterTextActive: {
+    color: Colors.white,
+  },
+
+  itemsContainer: {
+    paddingHorizontal: Spacing.lg,
+  },
+
+  itemsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+  },
+
+  itemCard: {
+    width: (width - Spacing.lg * 2 - Spacing.md) / 2,
+    position: 'relative',
+  },
+
+  cardActions: {
+    position: 'absolute',
+    top: Spacing.sm,
+    right: Spacing.sm,
+    flexDirection: 'row',
+    gap: Spacing.xs,
+    zIndex: 10,
+  },
+
+  editButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  deleteButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  bottomPadding: {
+    height: 100,
+  },
+
+  // Modal Styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: Colors.background.primary,
+  },
+
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border.primary,
+  },
+
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
+  },
+
+  typeSelectionContainer: {
+    flex: 1,
+    padding: Spacing.xl,
+    gap: Spacing.xl,
+  },
+
+  typeCard: {
+    flex: 1,
+    borderRadius: BorderRadius.xl,
+    overflow: 'hidden',
+  },
+
+  typeGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+    gap: Spacing.md,
+  },
+
+  typeTitle: {
+    color: Colors.white,
+    fontFamily: 'Ubuntu_700Bold',
+  },
+
+  typeDescription: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: 'center',
+  },
+
+  fieldContainer: {
+    marginBottom: Spacing.lg,
+  },
+
+  fieldLabel: {
+    fontFamily: 'Ubuntu_600SemiBold',
+    color: Colors.text.primary,
+    marginBottom: Spacing.sm,
+    fontSize: 12,
+    textTransform: 'uppercase',
+  },
+
+  categoryChip: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.background.secondary,
+    marginRight: Spacing.sm,
+  },
+
+  categoryChipSelected: {
+    backgroundColor: Colors.primary,
+  },
+
+  categoryChipText: {
+    fontFamily: 'Ubuntu_500Medium',
+    color: Colors.text.secondary,
+  },
+
+  categoryChipTextSelected: {
+    color: Colors.white,
+  },
+
+  amountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+    gap: Spacing.sm,
+  },
+
+  specRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.sm,
+    gap: Spacing.xs,
+  },
+
+  dimensionsRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+
+  removeButton: {
+    padding: Spacing.xs,
+  },
+
+  imagePreview: {
+    position: 'relative',
+    marginRight: Spacing.md,
+  },
+
+  previewImage: {
+    width: 100,
+    height: 100,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.background.secondary,
+  },
+
+  uploadOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: BorderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  uploadSuccessOverlay: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: Colors.white,
+    borderRadius: 12,
+  },
+
+  uploadErrorOverlay: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: Colors.white,
+    borderRadius: 12,
+  },
+
+  removeImageButton: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+  },
+
+  addImageButton: {
+    width: 100,
+    height: 100,
+    borderRadius: BorderRadius.md,
+    borderWidth: 2,
+    borderColor: Colors.border.primary,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.background.secondary,
+  },
+
+  toggleContainer: {
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.xl,
+  },
+
+  toggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border.primary,
+  },
+
+  modalActions: {
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border.primary,
+    gap: Spacing.md,
+  },
+
+  modalButton: {
+    flex: 1,
+  },
+});

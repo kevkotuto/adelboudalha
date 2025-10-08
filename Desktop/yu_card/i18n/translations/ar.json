@@ -1,0 +1,886 @@
+{
+  "common": {
+    "continue": "متابعة",
+    "skip": "تخطي",
+    "next": "التالي",
+    "back": "رجوع",
+    "previous": "السابق",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "done": "تم",
+    "yes": "نعم",
+    "no": "لا",
+    "ok": "موافق",
+    "error": "خطأ",
+    "search": "بحث...",
+    "loading": "جاري التحميل...",
+    "all": "الكل",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "add": "إضافة",
+    "delete": "حذف",
+    "view": "عرض",
+    "buy": "شراء",
+    "quantity": "الكمية",
+    "total": "المجموع",
+    "price": "السعر",
+    "stock": "المخزون",
+    "rating": "التقييم",
+    "reviews": "المراجعات",
+    "discount": "خصم",
+    "popular": "شائع"
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "سجل دخولك إلى حساب يو كارد",
+      "button": "تسجيل الدخول",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "noAccount": "ليس لديك حساب؟",
+      "registerLink": "إنشاء حساب",
+      "or": "أو"
+    },
+    "register": {
+      "title": "إنشاء حساب",
+      "subtitle": "انضم إلى يو كارد واكتشف عروضنا",
+      "button": "إنشاء حسابي",
+      "hasAccount": "لديك حساب بالفعل؟",
+      "loginLink": "تسجيل الدخول",
+      "or": "أو"
+    },
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور؟",
+      "subtitle": "أدخل رقم هاتفك لتلقي رمز إعادة التعيين",
+      "sendCode": "إرسال الرمز",
+      "rememberPassword": "تتذكر كلمة المرور؟",
+      "backToLogin": "العودة إلى تسجيل الدخول"
+    },
+    "otp": {
+      "title": "أدخل رمز التحقق المكون من 6 أرقام",
+      "subtitle": "لقد أرسلنا لك رمز تحقق إلى",
+      "verify": "متابعة",
+      "resend": "إعادة إرسال الرمز",
+      "resendIn": "إعادة إرسال الرمز خلال",
+      "resent": "تم إعادة إرسال الرمز",
+      "resentMessage": "تم إرسال رمز تحقق جديد.",
+      "verificationRequired": "التحقق مطلوب",
+      "verificationRequiredMessage": "هاتفك غير محقق بعد. تم إرسال رمز التحقق إليك."
+    },
+    "resetPassword": {
+      "title": "كلمة مرور جديدة",
+      "subtitle": "أنشئ كلمة مرور جديدة آمنة لحسابك",
+      "button": "إعادة تعيين كلمة المرور",
+      "success": "نجح",
+      "successMessage": "تم إعادة تعيين كلمة المرور بنجاح.",
+      "backToLogin": "العودة إلى تسجيل الدخول"
+    },
+    "logout": "تسجيل الخروج",
+    "fields": {
+      "phoneNumber": "رقم الهاتف",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة (اختياري)",
+      "fullName": "الاسم الكامل",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmNewPassword": "تأكيد كلمة المرور الجديدة"
+    },
+    "placeholders": {
+      "phoneNumber": "+225 XX XX XX XX XX",
+      "password": "أدخل كلمة المرور",
+      "confirmPassword": "أكد كلمة المرور",
+      "firstName": "أدخل اسمك الأول",
+      "lastName": "أدخل اسم العائلة",
+      "fullName": "أدخل اسمك الكامل",
+      "newPassword": "أدخل كلمة المرور الجديدة",
+      "confirmNewPassword": "أكد كلمة المرور الجديدة"
+    },
+    "errors": {
+      "phoneRequired": "رقم الهاتف مطلوب",
+      "phoneInvalid": "رقم الهاتف غير صحيح",
+      "passwordRequired": "كلمة المرور مطلوبة",
+      "passwordTooShort": "يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل",
+      "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
+      "passwordMismatch": "كلمات المرور غير متطابقة",
+      "firstNameRequired": "الاسم الأول مطلوب",
+      "loginFailed": "فشل تسجيل الدخول",
+      "loginFailedMessage": "تحقق من بياناتك وحاول مرة أخرى",
+      "registerFailed": "فشل في إنشاء الحساب",
+      "registerFailedMessage": "تعذر إنشاء حسابك. يرجى المحاولة مرة أخرى",
+      "fullNameRequired": "الاسم الكامل مطلوب",
+      "invalidOTP": "رمز غير صحيح",
+      "otpRequired": "يرجى إدخال الرمز المكون من 4 أرقام",
+      "missingPhone": "خطأ",
+      "missingPhoneMessage": "رقم الهاتف مفقود. يرجى البدء من جديد.",
+      "otpVerificationFailed": "الرمز المدخل غير صحيح. يرجى المحاولة مرة أخرى.",
+      "verificationFailed": "فشل التحقق",
+      "tryAgain": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+      "resendFailed": "خطأ",
+      "resendFailedMessage": "تعذر إعادة إرسال الرمز. يرجى المحاولة مرة أخرى.",
+      "forgotPasswordFailed": "خطأ",
+      "forgotPasswordFailedMessage": "تعذر إرسال الرمز. يرجى المحاولة مرة أخرى.",
+      "missingData": "خطأ",
+      "missingDataMessage": "بيانات مفقودة. يرجى إعادة بدء العملية.",
+      "resetPasswordFailed": "خطأ",
+      "resetPasswordFailedMessage": "تعذر إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "tabs": {
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "orders": "الطلبات",
+    "profile": "الملف الشخصي"
+  },
+  "admin_tabs": {
+    "dashboard": "لوحة التحكم",
+    "orders": "الطلبات",
+    "products": "المنتجات",
+    "gift_codes": "الرموز",
+    "users": "المستخدمون",
+    "categories": "الفئات",
+    "delivery": "التوصيل",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات"
+  },
+  "home": {
+    "welcome": "مرحباً بك في يو كارد",
+    "subtitle": "بطاقات الهدايا والمنتجات المفضلة لديك",
+    "popular_gift_cards": "بطاقات الهدايا الشعبية",
+    "popular_products": "المنتجات الشعبية",
+    "see_all": "عرض الكل",
+    "special_offers": "عروض خاصة",
+    "new_arrivals": "وصل حديثاً"
+  },
+  "categories": {
+    "title": "الفئات",
+    "gift_cards": "بطاقات الهدايا",
+    "physical_products": "المنتجات المادية",
+    "gaming": "الألعاب",
+    "tech": "التكنولوجيا",
+    "entertainment": "الترفيه",
+    "shopping": "التسوق",
+    "smartphone": "الهواتف الذكية",
+    "tablet": "الأجهزة اللوحية",
+    "accessories": "الإكسسوارات",
+    "laptop": "أجهزة الكمبيوتر المحمولة",
+    "filter_by_category": "تصفية حسب الفئة",
+    "no_products": "لم يتم العثور على منتجات"
+  },
+  "languages": {
+    "select_language": "اختر لغتك",
+    "language_names": {
+      "fr": "Français",
+      "en": "English",
+      "ar": "العربية",
+      "es": "Español",
+      "bm": "Bamanankan"
+    }
+  },
+  "onboarding": {
+    "page1": {
+      "title": "مرحباً",
+      "text": "اكتشف تطبيقنا"
+    },
+    "page2": {
+      "title": "الميزات",
+      "text": "استكشف جميع الإمكانيات"
+    },
+    "page3": {
+      "title": "ابدأ",
+      "text": "هل أنت مستعد للبدء؟"
+    }
+  },
+  "orders": {
+    "title": "طلباتي",
+    "view_code": "عرض الكود",
+    "copy_code": "نسخ الكود",
+    "share_code": "مشاركة الكود",
+    "contact_support": "اتصل بالدعم",
+    "gift_card_code": "كود بطاقة الهدايا",
+    "order_details": "تفاصيل الطلب",
+    "status": {
+      "pending": "في انتظار",
+      "confirmed": "مؤكد",
+      "processing": "قيد المعالجة",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "ملغي"
+    }
+  },
+  "cart": {
+    "title": "السلة",
+    "empty": "سلتك فارغة",
+    "checkout": "الدفع",
+    "checkout_description": "دفع طلبك Yu Card",
+    "checkout_with_wave": "الدفع بـ Wave",
+    "total": "المجموع",
+    "subtotal": "المجموع الفرعي",
+    "delivery": "التوصيل",
+    "free_delivery": "توصيل مجاني",
+    "gift_card": "بطاقة هدايا",
+    "clear_all": "مسح الكل",
+    "empty_description": "أضف عناصر لبدء التسوق",
+    "continue_shopping": "متابعة التسوق",
+    "remove_item": "إزالة العنصر",
+    "update_quantity": "تحديث الكمية",
+    "item": "عنصر",
+    "items": "عناصر",
+    "taxes": "الضرائب",
+    "included": "مشمولة",
+    "unit_price": "سعر الوحدة",
+    "max_quantity_reached": "تم الوصول للحد الأقصى",
+    "order_summary": "ملخص الطلب",
+    "secure_payment_wave": "دفع آمن بمحفظة Wave",
+    "toast": {
+      "added_title": "تمت الإضافة إلى السلة",
+      "added_subtitle": "تمت إضافة {{product}} إلى سلتك",
+      "error_title": "خطأ",
+      "error_subtitle": "تعذر الإضافة إلى السلة",
+      "removed_title": "تمت الإزالة من السلة",
+      "removed_subtitle": "تمت إزالة {{product}}",
+      "removed_subtitle_generic": "تمت إزالة العنصر من السلة",
+      "cleared_title": "تم مسح السلة",
+      "cleared_subtitle": "تمت إزالة جميع العناصر",
+      "quantity_updated_title": "تم تحديث الكمية",
+      "quantity_updated_subtitle": "تم تعديل الكمية"
+    }
+  },
+  "search": {
+    "results": "نتائج البحث",
+    "results_found": "نتائج موجودة",
+    "no_results": "لا توجد نتائج",
+    "no_results_for": "لا توجد نتائج لـ",
+    "try_different_filters": "جرب مرشحات مختلفة"
+  },
+  "filter": {
+    "title": "المرشحات",
+    "reset": "إعادة تعيين",
+    "apply": "تطبيق المرشحات",
+    "type": "نوع المنتج",
+    "category": "الفئة",
+    "all": "الكل",
+    "gift_cards": "بطاقات الهدايا",
+    "gift_card": "بطاقة هدايا",
+    "products": "المنتجات المادية",
+    "product": "منتج"
+  },
+  "sort": {
+    "title": "ترتيب حسب",
+    "relevance": "الصلة",
+    "popularity": "الشعبية",
+    "price_low_to_high": "السعر: من المنخفض إلى العالي",
+    "price_high_to_low": "السعر: من العالي إلى المنخفض",
+    "newest": "الأحدث",
+    "rating": "الأعلى تقييماً"
+  },
+  "profile": {
+    "title": "ملفي الشخصي",
+    "personal_info": "المعلومات الشخصية",
+    "name": "الاسم الكامل",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "address": "العنوان",
+    "preferences": "التفضيلات",
+    "language": "اللغة",
+    "notifications_label": "الإشعارات",
+    "push_notifications": "إشعارات الدفع",
+    "push_notifications_subtitle": "تلقي التنبيهات على جهازك",
+    "newsletter": "النشرة الإخبارية",
+    "account": "الحساب",
+    "change_password": "تغيير كلمة المرور",
+    "edit_profile": "تعديل الملف الشخصي",
+    "save_changes": "حفظ التغييرات",
+    "logout": {
+      "title": "تسجيل الخروج",
+      "message": "هل أنت متأكد من أنك تريد تسجيل الخروج؟",
+      "confirm": "تسجيل الخروج"
+    },
+    "notifications": {
+      "permission_denied_title": "تم رفض الإذن",
+      "permission_denied_message": "يجب السماح بالإشعارات في إعدادات جهازك."
+    }
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "unread": "غير مقروءة",
+    "mark_all_read": "تحديد الكل كمقروء",
+    "empty_title": "لا توجد إشعارات",
+    "empty_message": "ليس لديك أي إشعارات في الوقت الحالي",
+    "error_title": "خطأ في التحميل",
+    "delete_title": "حذف",
+    "delete_message": "هل تريد حذف هذا الإشعار؟",
+    "delete_error": "تعذر حذف الإشعار",
+    "mark_all_error": "تعذر تحديد جميع الإشعارات كمقروءة",
+    "success": "نجح",
+    "all_marked_read": "تم تحديد جميع الإشعارات كمقروءة",
+    "just_now": "الآن",
+    "minutes_ago": "د",
+    "hours_ago": "س",
+    "days_ago": "ي"
+  },
+  "product": {
+    "details": "تفاصيل المنتج",
+    "specifications": "المواصفات",
+    "description": "الوصف",
+    "add_to_cart": "أضف إلى السلة",
+    "buy_now": "اشتر الآن",
+    "delivery_time": "وقت التوصيل",
+    "in_stock": "متوفر",
+    "limited_stock": "مخزون محدود",
+    "brand": "العلامة التجارية"
+  },
+  "payment": {
+    "title": "الدفع",
+    "wave_wallet": "محفظة Wave",
+    "enter_phone": "أدخل رقم هاتفك",
+    "use_my_number": "استخدم رقمي",
+    "confirm_payment": "تأكيد الدفع",
+    "payment_success": "نجح الدفع",
+    "payment_failed": "فشل الدفع",
+    "processing": "جاري المعالجة..."
+  },
+  "errors": {
+    "auth": {
+      "phone_required": "رقم الهاتف مطلوب",
+      "phone_invalid": "رقم الهاتف غير صحيح",
+      "phone_format_invalid": "تنسيق رقم الهاتف غير صحيح",
+      "otp_required": "رمز OTP مطلوب",
+      "otp_invalid": "رمز OTP غير صحيح",
+      "otp_expired": "انتهت صلاحية رمز OTP",
+      "password_required": "كلمة المرور مطلوبة",
+      "password_too_short": "يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل",
+      "email_invalid": "عنوان البريد الإلكتروني غير صحيح",
+      "auth_failed": "فشل المصادقة",
+      "token_expired": "انتهت صلاحية جلستك",
+      "unauthorized": "وصول غير مصرح"
+    },
+    "cart": {
+      "empty_cart": "سلتك فارغة",
+      "quantity_required": "يجب أن تكون الكمية أكبر من 0",
+      "gift_card_amount_invalid": "مبلغ بطاقة الهدايا غير صحيح",
+      "gift_card_amount_required": "مبلغ بطاقة الهدايا مطلوب",
+      "out_of_stock": "هذا المنتج غير متوفر",
+      "gift_card_unavailable": "بطاقة الهدايا هذه لم تعد متاحة",
+      "insufficient_stock": "المخزون غير كافٍ",
+      "max_quantity_exceeded": "تم تجاوز الحد الأقصى للكمية"
+    },
+    "order": {
+      "no_items": "الطلب لا يحتوي على عناصر",
+      "shipping_address_required": "عنوان الشحن مطلوب للمنتجات المادية",
+      "payment_not_confirmed": "لم يتم تأكيد الدفع",
+      "order_not_found": "الطلب غير موجود",
+      "cannot_cancel": "لا يمكن إلغاء هذا الطلب",
+      "already_cancelled": "تم إلغاء هذا الطلب بالفعل"
+    },
+    "user": {
+      "full_name_required": "الاسم الكامل مطلوب",
+      "phone_required": "رقم الهاتف مطلوب",
+      "address_required": "العنوان مطلوب",
+      "city_required": "المدينة مطلوبة",
+      "profile_incomplete": "يرجى إكمال ملفك الشخصي"
+    },
+    "wave": {
+      "amount_required": "المبلغ مطلوب",
+      "amount_too_low": "الحد الأدنى للمبلغ 100 فرنك أفريقي",
+      "amount_too_high": "الحد الأقصى للمبلغ 5,000,000 فرنك أفريقي",
+      "phone_required": "رقم هاتف Wave مطلوب",
+      "phone_invalid": "رقم هاتف Wave غير صحيح",
+      "payment_failed": "فشل الدفع",
+      "insufficient_balance": "الرصيد غير كافٍ",
+      "transaction_failed": "فشلت المعاملة",
+      "network_error": "خطأ في الشبكة",
+      "service_unavailable": "الخدمة غير متاحة مؤقتاً"
+    },
+    "network": {
+      "connection_error": "خطأ في الاتصال",
+      "timeout": "انتهت مهلة الانتظار",
+      "server_error": "خطأ في الخادم",
+      "unknown_error": "خطأ غير معروف"
+    }
+  },
+  "status": {
+    "order": {
+      "pending": {
+        "label": "في انتظار",
+        "description": "طلبك قيد المعالجة"
+      },
+      "confirmed": {
+        "label": "مؤكد",
+        "description": "تم تأكيد طلبك"
+      },
+      "processing": {
+        "label": "قيد المعالجة",
+        "description": "طلبك قيد التحضير"
+      },
+      "shipped": {
+        "label": "تم الشحن",
+        "description": "تم شحن طلبك"
+      },
+      "delivered": {
+        "label": "تم التسليم",
+        "description": "تم تسليم طلبك"
+      },
+      "cancelled": {
+        "label": "ملغي",
+        "description": "تم إلغاء طلبك"
+      },
+      "refunded": {
+        "label": "مسترد",
+        "description": "تم استرداد طلبك"
+      }
+    },
+    "payment": {
+      "pending": "في انتظار",
+      "processing": "قيد المعالجة",
+      "completed": "مكتمل",
+      "failed": "فشل",
+      "cancelled": "ملغي",
+      "refunded": "مسترد"
+    },
+    "wave": {
+      "pending": "في انتظار",
+      "completed": "مكتمل",
+      "failed": "فشل",
+      "cancelled": "ملغي",
+      "expired": "منتهي الصلاحية"
+    }
+  },
+  "validation": {
+    "gift_card": {
+      "amount_below_min": "الحد الأدنى للمبلغ {min} فرنك أفريقي",
+      "amount_above_max": "الحد الأقصى للمبلغ {max} فرنك أفريقي",
+      "amount_not_multiple": "يجب أن يكون المبلغ مضاعفاً لـ {step} فرنك أفريقي",
+      "out_of_stock": "بطاقة الهدايا هذه غير متوفرة",
+      "inactive": "بطاقة الهدايا هذه لم تعد نشطة"
+    },
+    "product": {
+      "out_of_stock": "هذا المنتج غير متوفر",
+      "inactive": "هذا المنتج لم يعد متاحاً",
+      "quantity_exceeded": "الكمية المطلوبة تتجاوز المخزون المتاح"
+    },
+    "phone": {
+      "senegal_format": "يجب أن يكون الرقم بتنسيق سنغالي (+221)",
+      "ivory_coast_format": "يجب أن يكون الرقم بتنسيق ساحل العاج (+225)",
+      "invalid_operator": "مشغل غير مدعوم",
+      "invalid_length": "طول الرقم غير صحيح"
+    }
+  },
+  "messages": {
+    "payment": {
+      "initiation_instructions": "اطلب *144*1*{amount}*{reference}# من هاتف Wave لتأكيد الدفع",
+      "retry_instructions": "إذا فشل الدفع، أعد المحاولة بطلب *144*1*{amount}*{reference}#",
+      "amount_details": "المبلغ: {amount} فرنك أفريقي",
+      "reference_details": "المرجع: {reference}",
+      "timeout_warning": "ستنتهي صلاحية هذا الدفع خلال {minutes} دقائق",
+      "success_message": "تم دفع {amount} فرنك أفريقي بنجاح",
+      "failed_message": "فشل دفع {amount} فرنك أفريقي. يرجى المحاولة مرة أخرى"
+    },
+    "order": {
+      "gift_card_amount_details": "المبلغ: {amount} فرنك أفريقي",
+      "quantity_details": "الكمية: {quantity}",
+      "sku_details": "رمز المنتج: {sku}",
+      "unknown_product": "منتج غير معروف",
+      "items_removed_count": "تم حذف {count} عنصر",
+      "stock_available": "متوفر فقط {count} قطعة",
+      "cards_available": "متوفر فقط {count} بطاقة"
+    },
+    "shipping": {
+      "base_cost": "التكلفة الأساسية: {amount} فرنك أفريقي",
+      "additional_items": "العناصر الإضافية: {amount} فرنك أفريقي",
+      "location_adjustment": "تعديل الموقع: {percentage}%",
+      "abidjan_discount": "خصم أبيدجان: -20%",
+      "remote_area_surcharge": "رسوم المنطقة النائية: +50%"
+    }
+  },
+  "currency": {
+    "xof": "فرنك أفريقي",
+    "format": "{amount} فرنك أفريقي",
+    "format_with_space": "{amount} فرنك أفريقي"
+  },
+  "locations": {
+    "abidjan": "أبيدجان",
+    "bouake": "بواكي",
+    "san_pedro": "سان بيدرو",
+    "yamoussoukro": "ياموسوكرو",
+    "ivory_coast": "ساحل العاج"
+  },
+  "update": {
+    "title": "تحديث متاح",
+    "message": "إصدار جديد من التطبيق متاح. قم بالتحديث الآن للحصول على أفضل تجربة.",
+    "downloading": "جاري تحميل التحديث...",
+    "updating": "جاري تثبيت التحديث...",
+    "update_now": "التحديث الآن",
+    "later": "لاحقاً",
+    "version": "الإصدار",
+    "check_updates": "التحقق من التحديثات",
+    "no_update_available": "لا توجد تحديثات",
+    "app_up_to_date": "تطبيقك محدث"
+  },
+  "admin": {
+    "common": {
+      "search": "بحث...",
+      "filter": "تصفية",
+      "export": "تصدير",
+      "import": "استيراد",
+      "actions": "إجراءات",
+      "bulk_actions": "إجراءات جماعية",
+      "select_all": "تحديد الكل",
+      "deselect_all": "إلغاء تحديد الكل",
+      "delete_selected": "حذف المحدد",
+      "refresh": "تحديث",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "view": "عرض",
+      "details": "التفاصيل",
+      "status": "الحالة",
+      "date": "التاريخ",
+      "actions_menu": "قائمة الإجراءات",
+      "no_data": "لا توجد بيانات",
+      "loading": "جاري التحميل...",
+      "error": "خطأ",
+      "success": "نجح",
+      "confirm": "تأكيد",
+      "download": "تحميل",
+      "upload": "رفع",
+      "image": "صورة",
+      "active": "نشط",
+      "inactive": "غير نشط"
+    },
+    "dashboard": {
+      "title": "لوحة التحكم الإدارية",
+      "subtitle": "نظرة عامة على منصة Yu Card",
+      "overview": "نظرة عامة",
+      "quick_stats": "إحصائيات سريعة",
+      "recent_activity": "النشاط الأخير",
+      "analytics": "التحليلات",
+      "revenue": "الإيرادات",
+      "total_revenue": "إجمالي الإيرادات",
+      "today_revenue": "إيرادات اليوم",
+      "monthly_revenue": "الإيرادات الشهرية",
+      "orders": "الطلبات",
+      "total_orders": "إجمالي الطلبات",
+      "pending_orders": "الطلبات المعلقة",
+      "completed_orders": "الطلبات المكتملة",
+      "users": "المستخدمون",
+      "total_users": "إجمالي المستخدمين",
+      "new_users": "مستخدمون جدد",
+      "active_users": "مستخدمون نشطون",
+      "products": "المنتجات",
+      "total_products": "إجمالي المنتجات",
+      "low_stock": "مخزون منخفض",
+      "out_of_stock": "نفد المخزون",
+      "gift_cards": "بطاقات الهدايا",
+      "total_gift_cards": "إجمالي البطاقات",
+      "active_codes": "الرموز النشطة",
+      "used_codes": "الرموز المستخدمة",
+      "period": {
+        "today": "اليوم",
+        "week": "هذا الأسبوع",
+        "month": "هذا الشهر",
+        "year": "هذا العام",
+        "custom": "مخصص"
+      },
+      "charts": {
+        "revenue_trend": "اتجاه الإيرادات",
+        "orders_by_status": "الطلبات حسب الحالة",
+        "top_products": "أفضل المنتجات",
+        "user_growth": "نمو المستخدمين"
+      }
+    },
+    "users": {
+      "title": "إدارة المستخدمين",
+      "subtitle": "إدارة حسابات المستخدمين والأدوار",
+      "all_users": "جميع المستخدمين",
+      "user_details": "تفاصيل المستخدم",
+      "edit_user": "تعديل المستخدم",
+      "suspend_user": "تعليق المستخدم",
+      "activate_user": "تنشيط المستخدم",
+      "delete_user": "حذف المستخدم",
+      "user_info": "معلومات المستخدم",
+      "full_name": "الاسم الكامل",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "status": "الحالة",
+      "created_at": "تاريخ الإنشاء",
+      "last_login": "آخر تسجيل دخول",
+      "wallet_balance": "رصيد المحفظة",
+      "total_orders": "إجمالي الطلبات",
+      "total_spent": "إجمالي الإنفاق",
+      "filter_by_role": "تصفية حسب الدور",
+      "filter_by_status": "تصفية حسب الحالة",
+      "statuses": {
+        "all": "الكل",
+        "active": "نشط",
+        "suspended": "معلق",
+        "pending": "معلق"
+      },
+      "roles": {
+        "all": "جميع الأدوار",
+        "client": "عميل",
+        "admin": "مدير",
+        "super_admin": "مدير عام"
+      },
+      "wallet": {
+        "title": "إدارة المحفظة",
+        "credit": "إضافة رصيد",
+        "debit": "خصم رصيد",
+        "amount": "المبلغ",
+        "description": "الوصف",
+        "confirm_credit": "تأكيد الإضافة",
+        "confirm_debit": "تأكيد الخصم",
+        "current_balance": "الرصيد الحالي",
+        "new_balance": "الرصيد الجديد"
+      },
+      "suspend_confirm": "تأكيد التعليق",
+      "suspend_message": "هل أنت متأكد من تعليق هذا المستخدم؟",
+      "activate_confirm": "تأكيد التنشيط",
+      "activate_message": "هل أنت متأكد من تنشيط هذا المستخدم؟"
+    },
+    "orders": {
+      "title": "إدارة الطلبات",
+      "subtitle": "تتبع ومعالجة الطلبات",
+      "all_orders": "جميع الطلبات",
+      "order_details": "تفاصيل الطلب",
+      "order_number": "رقم الطلب",
+      "customer": "العميل",
+      "order_date": "تاريخ الطلب",
+      "status": "الحالة",
+      "payment_status": "حالة الدفع",
+      "total_amount": "المبلغ الإجمالي",
+      "items": "العناصر",
+      "shipping": "الشحن",
+      "shipping_address": "عنوان الشحن",
+      "delivery_date": "تاريخ التسليم",
+      "tracking_number": "رقم التتبع",
+      "filter_by_status": "تصفية حسب الحالة",
+      "filter_by_payment": "تصفية حسب الدفع",
+      "date_range": "نطاق التاريخ",
+      "from_date": "من تاريخ",
+      "to_date": "إلى تاريخ",
+      "statuses": {
+        "all": "الكل",
+        "pending": "معلق",
+        "confirmed": "مؤكد",
+        "processing": "قيد المعالجة",
+        "shipped": "تم الشحن",
+        "delivered": "تم التسليم",
+        "cancelled": "ملغي",
+        "refunded": "مسترد"
+      },
+      "payment_statuses": {
+        "all": "الكل",
+        "pending": "معلق",
+        "completed": "مكتمل",
+        "failed": "فشل",
+        "refunded": "مسترد"
+      },
+      "update_status": "تحديث الحالة",
+      "change_status": "تغيير الحالة",
+      "select_new_status": "اختر الحالة الجديدة",
+      "status_updated": "تم تحديث الحالة",
+      "export_csv": "تصدير CSV",
+      "print_invoice": "طباعة الفاتورة",
+      "send_notification": "إرسال إشعار",
+      "refund_order": "استرداد الطلب",
+      "cancel_order": "إلغاء الطلب",
+      "confirm_cancel": "تأكيد الإلغاء",
+      "confirm_refund": "تأكيد الاسترداد",
+      "cancel_message": "هل أنت متأكد من إلغاء هذا الطلب؟",
+      "refund_message": "هل أنت متأكد من استرداد هذا الطلب؟"
+    },
+    "products": {
+      "title": "إدارة المنتجات",
+      "subtitle": "إدارة كتالوج المنتجات",
+      "all_products": "جميع المنتجات",
+      "add_product": "إضافة منتج",
+      "edit_product": "تعديل المنتج",
+      "delete_product": "حذف المنتج",
+      "product_details": "تفاصيل المنتج",
+      "basic_info": "المعلومات الأساسية",
+      "product_name": "اسم المنتج",
+      "type": "النوع",
+      "category": "الفئة",
+      "description": "الوصف",
+      "pricing": "التسعير",
+      "price": "السعر",
+      "cost_price": "سعر التكلفة",
+      "discount": "الخصم",
+      "inventory": "المخزون",
+      "stock_quantity": "كمية المخزون",
+      "sku": "SKU",
+      "barcode": "الباركود",
+      "track_inventory": "تتبع المخزون",
+      "low_stock_threshold": "حد المخزون المنخفض",
+      "images": "الصور",
+      "upload_images": "رفع الصور",
+      "main_image": "الصورة الرئيسية",
+      "gallery": "المعرض",
+      "settings": "الإعدادات",
+      "is_popular": "منتج مشهور",
+      "is_featured": "منتج مميز",
+      "is_active": "نشط",
+      "delivery_time": "وقت التسليم (أيام)",
+      "warranty": "الضمان (أشهر)",
+      "meta_keywords": "كلمات SEO",
+      "confirm_delete": "تأكيد الحذف",
+      "delete_warning": "هذا الإجراء غير قابل للتراجع",
+      "low_stock": "مخزون منخفض",
+      "out_of_stock": "نفد المخزون",
+      "in_stock": "في المخزون",
+      "views": "المشاهدات",
+      "favorites": "المفضلة",
+      "sales": "المبيعات",
+      "types": {
+        "all": "الكل",
+        "physical": "منتج مادي",
+        "gift_card": "بطاقة هدايا"
+      },
+      "stock_status": {
+        "all": "الكل",
+        "in_stock": "في المخزون",
+        "low_stock": "مخزون منخفض",
+        "out_of_stock": "نفد المخزون"
+      }
+    },
+    "gift_cards": {
+      "title": "إدارة بطاقات الهدايا",
+      "subtitle": "إدارة البطاقات والرموز",
+      "all_codes": "جميع الرموز",
+      "generate_codes": "إنشاء رموز",
+      "code": "الرمز",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "created_at": "تاريخ الإنشاء",
+      "expires_at": "تاريخ الانتهاء",
+      "used_at": "تاريخ الاستخدام",
+      "user": "المستخدم",
+      "statuses": {
+        "all": "الكل",
+        "pending": "معلق",
+        "active": "نشط",
+        "used": "مستخدم",
+        "expired": "منتهي",
+        "cancelled": "ملغي"
+      },
+      "generation": {
+        "title": "إنشاء رموز جديدة",
+        "amount": "مبلغ البطاقة",
+        "quantity": "الكمية",
+        "expiry_days": "صلاحية (أيام)",
+        "generate": "إنشاء",
+        "generating": "جاري الإنشاء..."
+      },
+      "actions": {
+        "activate": "تنشيط",
+        "cancel": "إلغاء",
+        "details": "التفاصيل",
+        "copy": "نسخ الرمز",
+        "share": "مشاركة"
+      },
+      "activation": {
+        "title": "تنشيط بطاقة الهدايا",
+        "email": "البريد الإلكتروني",
+        "confirm": "تنشيط",
+        "activating": "جاري التنشيط..."
+      },
+      "details": {
+        "title": "تفاصيل البطاقة",
+        "code": "الرمز",
+        "amount": "المبلغ",
+        "status": "الحالة",
+        "created": "تاريخ الإنشاء",
+        "expires": "تاريخ الانتهاء",
+        "used": "تاريخ الاستخدام",
+        "user_email": "بريد المستخدم"
+      },
+      "confirm_cancel": "تأكيد الإلغاء",
+      "cancel_message": "هل أنت متأكد من إلغاء هذا الرمز؟",
+      "success": {
+        "generated": "تم إنشاء الرموز بنجاح",
+        "activated": "تم تنشيط البطاقة",
+        "cancelled": "تم إلغاء الرمز",
+        "copied": "تم النسخ",
+        "copiedDesc": "تم نسخ الرمز إلى الحافظة"
+      },
+      "errors": {
+        "generateError": "فشل إنشاء الرموز",
+        "activateError": "فشل التنشيط",
+        "cancelError": "فشل الإلغاء",
+        "copyError": "فشل النسخ",
+        "emailRequired": "البريد الإلكتروني مطلوب"
+      }
+    },
+    "categories": {
+      "title": "إدارة الفئات",
+      "subtitle": "تنظيم المنتجات والبطاقات",
+      "all_categories": "جميع الفئات",
+      "add_category": "إضافة فئة",
+      "edit_category": "تعديل الفئة",
+      "delete_category": "حذف الفئة",
+      "category_name": "اسم الفئة",
+      "description": "الوصف",
+      "icon": "الأيقونة",
+      "upload_icon": "رفع أيقونة",
+      "products_count": "عدد المنتجات",
+      "is_active": "نشط",
+      "created_at": "تاريخ الإنشاء",
+      "confirm_delete": "تأكيد الحذف",
+      "delete_warning": "سيتم حذف هذه الفئة نهائياً",
+      "success": {
+        "created": "تم إنشاء الفئة",
+        "updated": "تم تحديث الفئة",
+        "deleted": "تم حذف الفئة"
+      },
+      "errors": {
+        "createError": "فشل إنشاء الفئة",
+        "updateError": "فشل التحديث",
+        "deleteError": "فشل الحذف",
+        "nameRequired": "الاسم مطلوب"
+      }
+    },
+    "delivery": {
+      "title": "إدارة التوصيل",
+      "subtitle": "تتبع التوصيلات الجارية"
+    },
+    "notifications": {
+      "title": "إدارة الإشعارات",
+      "subtitle": "إرسال إشعارات للمستخدمين"
+    },
+    "reports": {
+      "title": "التقارير المالية",
+      "subtitle": "التحليلات والإحصائيات المالية"
+    },
+    "audit": {
+      "title": "سجلات التدقيق",
+      "subtitle": "سجل الإجراءات الإدارية"
+    },
+    "settings": {
+      "title": "إعدادات الإدارة",
+      "subtitle": "تكوين وإدارة نظام Yu Card"
+    },
+    "wallet": {
+      "title": "إدارة المحفظة",
+      "adjust_balance": "تعديل الرصيد",
+      "credit": "إضافة",
+      "debit": "خصم"
+    },
+    "stats": {
+      "total_revenue": "إجمالي الإيرادات",
+      "total_orders": "إجمالي الطلبات",
+      "total_users": "إجمالي المستخدمين",
+      "total_products": "إجمالي المنتجات",
+      "total_wallet": "إجمالي المحافظ"
+    },
+    "messages": {
+      "loading": "جاري التحميل...",
+      "no_data": "لا توجد بيانات",
+      "success": "نجح العملية",
+      "error": "حدث خطأ",
+      "confirm_action": "تأكيد الإجراء"
+    }
+  }
+}

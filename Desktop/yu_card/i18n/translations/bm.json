@@ -1,0 +1,886 @@
+{
+  "common": {
+    "continue": "Ka taa ɲɛfɛ",
+    "skip": "Ka bɔ",
+    "next": "Nata",
+    "back": "Ka segin",
+    "previous": "Tɛmɛnen",
+    "cancel": "Ka banna",
+    "save": "Ka mara",
+    "edit": "Ka ladamu",
+    "done": "A bannen",
+    "yes": "Ɔwɔ",
+    "no": "Ayi",
+    "ok": "A ka ɲi",
+    "error": "Fili",
+    "search": "Ka ɲini...",
+    "loading": "Ka doni...",
+    "all": "Bɛɛ",
+    "filter": "Ka sugu",
+    "sort": "Ka bolo",
+    "add": "Ka farɔ",
+    "delete": "Ka bɔ",
+    "view": "Ka lajɛ",
+    "buy": "Ka san",
+    "quantity": "Hakɛ",
+    "total": "Jɛkulɛn",
+    "price": "Musakaw",
+    "stock": "Mara",
+    "rating": "Jɛ",
+    "reviews": "Kɔrɔsiraw",
+    "discount": "Dɔncɔgo",
+    "popular": "Dibaw"
+  },
+  "auth": {
+    "login": {
+      "title": "Ka Don",
+      "subtitle": "I ka Yu Card jago la don",
+      "button": "Don",
+      "forgotPassword": "I ɲininka daɲɛgafe?",
+      "noAccount": "I tɛ jago tɛ?",
+      "registerLink": "Jago da",
+      "or": "walima"
+    },
+    "register": {
+      "title": "Jago da",
+      "subtitle": "Yu Card la farɔ ani an ka feere kunnafoniw lajɛ",
+      "button": "N ka jago da",
+      "hasAccount": "I ka jago bɛ yen?",
+      "loginLink": "Don",
+      "or": "walima"
+    },
+    "forgotPassword": {
+      "title": "I ɲininka daɲɛgafe?",
+      "subtitle": "I ka telefɔni nimoro sɛbɛn walasa ka kɛra code sɔrɔ",
+      "sendCode": "Code ci",
+      "rememberPassword": "I hakili bɛ daɲɛgafe kan?",
+      "backToLogin": "Segin don na"
+    },
+    "otp": {
+      "title": "Tilatara code 6 sɛbɛn",
+      "subtitle": "An ye tilatara code ci i ma",
+      "verify": "Ka taa ɲɛfɛ",
+      "resend": "Code segin ci",
+      "resendIn": "Code segin ci",
+      "resent": "Code seginna ci",
+      "resentMessage": "Tilatara code kura ciyama.",
+      "verificationRequired": "Tilatarali ka kan",
+      "verificationRequiredMessage": "I ka telefɔni tɛ tilatara fɔlɔ. Tilatara code ciyama i ma."
+    },
+    "resetPassword": {
+      "title": "Daɲɛgafe kura",
+      "subtitle": "I ka jago la daɲɛgafe lakana kura da",
+      "button": "Daɲɛgafe kɛra",
+      "success": "A kɛlɛn",
+      "successMessage": "I ka daɲɛgafe kɛrara kɛlɛn.",
+      "backToLogin": "Segin don na"
+    },
+    "logout": "Ka bɔ",
+    "fields": {
+      "phoneNumber": "Telefɔni nimoro",
+      "password": "Daɲɛgafe",
+      "confirmPassword": "Daɲɛgafe tilatara",
+      "firstName": "Tɔgɔ",
+      "lastName": "Jamana tɔgɔ (sɔrɔwɔ)",
+      "fullName": "Tɔgɔ kɛlɛn",
+      "newPassword": "Daɲɛgafe kura",
+      "confirmNewPassword": "Daɲɛgafe kura tilatara"
+    },
+    "placeholders": {
+      "phoneNumber": "+225 XX XX XX XX XX",
+      "password": "I ka daɲɛgafe sɛbɛn",
+      "confirmPassword": "I ka daɲɛgafe tilatara",
+      "firstName": "I ka tɔgɔ sɛbɛn",
+      "lastName": "I ka jamana tɔgɔ sɛbɛn",
+      "fullName": "I ka tɔgɔ kɛlɛn sɛbɛn",
+      "newPassword": "I ka daɲɛgafe kura sɛbɛn",
+      "confirmNewPassword": "I ka daɲɛgafe kura tilatara"
+    },
+    "errors": {
+      "phoneRequired": "Telefɔni nimoro kan",
+      "phoneInvalid": "Telefɔni nimoro tɛ tila",
+      "passwordRequired": "Daɲɛgafe kan",
+      "passwordTooShort": "Daɲɛgafe ka kan ka kɛ sɛn 6 ye",
+      "confirmPasswordRequired": "Daɲɛgafe tilatara kan",
+      "passwordMismatch": "Daɲɛgafew tɛ kɛ kelen ye",
+      "firstNameRequired": "Tɔgɔ kan",
+      "loginFailed": "Don filinw",
+      "loginFailedMessage": "I ka kunnafoniw lajɛ ka segin",
+      "registerFailed": "Tɔgɔ sɛbɛn filinw",
+      "registerFailedMessage": "I ka jago dabali bɔra. Segin",
+      "fullNameRequired": "Tɔgɔ kɛlɛn kan",
+      "invalidOTP": "Code tila",
+      "otpRequired": "Code 4 nɔ sɛbɛn",
+      "missingPhone": "Fili",
+      "missingPhoneMessage": "Telefɔni nimoro tɛ. Ka daminɛ kɔrɔ.",
+      "otpVerificationFailed": "Code sɛbɛnnen tila. Segin.",
+      "verificationFailed": "Tilatara filinw",
+      "tryAgain": "Fili yɛlɛma. Segin.",
+      "resendFailed": "Fili",
+      "resendFailedMessage": "Code ciwuli bɔra. Segin.",
+      "forgotPasswordFailed": "Fili",
+      "forgotPasswordFailedMessage": "Code ciwuli bɔra. Segin.",
+      "missingData": "Fili",
+      "missingDataMessage": "Kunnafoniw tɛ. Baarakɛcogo daminɛ kɔrɔ.",
+      "resetPasswordFailed": "Fili",
+      "resetPasswordFailedMessage": "Daɲɛgafe kɛra bɔra. Segin."
+    }
+  },
+  "tabs": {
+    "home": "So",
+    "categories": "Suguya",
+    "orders": "Caamuw",
+    "profile": "Jago"
+  },
+  "admin_tabs": {
+    "dashboard": "Kunnafonisɛbɛn",
+    "orders": "Caamuw",
+    "products": "Fɛnw",
+    "gift_codes": "Codew",
+    "users": "Baarakɛlaw",
+    "categories": "Suguyaw",
+    "delivery": "Di",
+    "notifications": "Kunnafoniw",
+    "settings": "Labɛn"
+  },
+  "languages": {
+    "select_language": "I ka kan sugandi",
+    "language_names": {
+      "fr": "Français",
+      "en": "English",
+      "ar": "العربية",
+      "es": "Español",
+      "bm": "Bamanankan"
+    }
+  },
+  "onboarding": {
+    "page1": {
+      "title": "Bisimila",
+      "text": "An ka baarakɛminɛn ye"
+    },
+    "page2": {
+      "title": "Baarakɛcogo",
+      "text": "Seko bɛɛ lajɛ"
+    },
+    "page3": {
+      "title": "Ka daminɛ",
+      "text": "I labɛnna ka daminɛ wa?"
+    }
+  },
+  "orders": {
+    "title": "N ka caamuw",
+    "view_code": "Code lajɛ",
+    "copy_code": "Code kopi",
+    "share_code": "Code tila",
+    "contact_support": "Dɛmɛbaga jogin",
+    "gift_card_code": "Hadiya kariti code",
+    "order_details": "Caama kunnafoniw",
+    "status": {
+      "pending": "Makɔnɔ",
+      "confirmed": "Tilatara",
+      "processing": "Ka baara kɛ",
+      "shipped": "Cigama",
+      "delivered": "Dila",
+      "cancelled": "Dabɔra"
+    }
+  },
+  "cart": {
+    "title": "Panye",
+    "empty": "I ka panye banta",
+    "checkout": "Sarali",
+    "checkout_with_wave": "Wave fɛ sarali",
+    "total": "Jɛkulɛn",
+    "subtotal": "Hakɛda",
+    "delivery": "Di",
+    "free_delivery": "Di hɔrɔnin",
+    "gift_card": "Hadiya kariti",
+    "clear_all": "Bɛɛ bɔ",
+    "empty_description": "Fɛnw farɔ ka san daminɛ",
+    "continue_shopping": "San ka taa ɲɛfɛ",
+    "remove_item": "Fɛn bɔ",
+    "update_quantity": "Hakɛ kɛra",
+    "item": "fɛn",
+    "items": "fɛnw",
+    "taxes": "Sariyaw",
+    "included": "Don a la",
+    "unit_price": "Kɛlen sɔngɔ",
+    "max_quantity_reached": "Hakɛ caman sɔrɔ",
+    "order_summary": "Caama kunnafoniw",
+    "secure_payment_wave": "Lakana sarali ni Wave Wallet ye",
+    "toast": {
+      "added_title": "Panye la farɔ",
+      "added_subtitle": "{{product}} farɔ i ka panye la",
+      "error_title": "Fili",
+      "error_subtitle": "Panye la farɔ bɔra",
+      "removed_title": "Panye fɛ bɔ",
+      "removed_subtitle": "{{product}} bɔra",
+      "removed_subtitle_generic": "Fɛn bɔra panye la",
+      "cleared_title": "Panye bɔra",
+      "cleared_subtitle": "Fɛn bɛɛ bɔra",
+      "quantity_updated_title": "Hakɛ kɛra",
+      "quantity_updated_subtitle": "Hakɛ ladamura"
+    }
+  },
+  "search": {
+    "results": "ɢini jɔw",
+    "results_found": "jɔw ɲinina",
+    "no_results": "Foyi ɲinina tɛ",
+    "no_results_for": "Foyi tɛ ta ye",
+    "try_different_filters": "Sugu wɛrɛnw kɛ"
+  },
+  "filter": {
+    "title": "Suguw",
+    "reset": "Ka sigi kɔrɔ",
+    "apply": "Suguw waleya",
+    "type": "Fɛn sugu",
+    "category": "Suguya",
+    "all": "Bɛɛ",
+    "gift_cards": "Hadiya karitiw",
+    "gift_card": "Hadiya kariti",
+    "products": "Fɛn tilennw",
+    "product": "Fɛn"
+  },
+  "sort": {
+    "title": "Bolo cogo",
+    "relevance": "Nɔgɔya",
+    "popularity": "Dibaga",
+    "price_low_to_high": "Musakaw: dɔgɔman ka taa sanfɛ",
+    "price_high_to_low": "Musakaw: sanfɛ ka taa dɔgɔman",
+    "newest": "Kura kura",
+    "rating": "Jɛ kɔrɔba"
+  },
+  "home": {
+    "welcome": "Fɛnɔrɔyɔrɔ",
+    "subtitle": "I ka hadiya karitiw ani fɛnw diyalenw",
+    "popular_gift_cards": "Hadiya Kariti Dibaw",
+    "popular_products": "Fɛn Dibaw",
+    "see_all": "Bɛɛ lajɛ",
+    "special_offers": "Fɛere kɛrɛnnw",
+    "new_arrivals": "Kura naw"
+  },
+  "categories": {
+    "title": "Suguyaw",
+    "all": "Suguya bɛɛ",
+    "gift_cards": "Hadiya Karitiw",
+    "physical_products": "Fɛn Tilennw",
+    "gaming": "Tulon",
+    "tech": "Fɛn kura",
+    "entertainment": "Nisongoya",
+    "shopping": "San",
+    "smartphone": "Telefɔni hakililaw",
+    "tablet": "Tablɛtiw",
+    "accessories": "Dɛmɛfɛnw",
+    "laptop": "Ɔridinatɛri fitinin",
+    "filter_by_category": "Suguya la sugu",
+    "no_products": "Fɛn foyi sɔrɔ"
+  },
+  "profile": {
+    "title": "N ka Jago",
+    "personal_info": "Mɔgɔ kunnafoniw",
+    "name": "Tɔgɔ kɛlɛn",
+    "phone": "Telefɔni",
+    "email": "Imɛli",
+    "address": "Sigiyɔrɔ",
+    "preferences": "Sugandiliw",
+    "language": "Kan",
+    "notifications_label": "Kunnafoniw",
+    "push_notifications": "Kunnafoni latigɛw",
+    "push_notifications_subtitle": "Ka kunnafoniw sɔrɔ i ka minɛn kan",
+    "newsletter": "Kunnafonisɛbɛn",
+    "account": "Jago",
+    "change_password": "Daɲɛgafe ɔɔlɔn",
+    "edit_profile": "Jago ladamu",
+    "save_changes": "Ɔladiliw mara",
+    "logout": {
+      "title": "Ka bɔ",
+      "message": "I bɛna ka bɔ tilin?",
+      "confirm": "Ka bɔ"
+    },
+    "notifications": {
+      "permission_denied_title": "Yamaruya banna",
+      "permission_denied_message": "I ka kan ka kunnafoniw yamariya i ka minɛn labɛnni na."
+    }
+  },
+  "notifications": {
+    "title": "Kunnafoniw",
+    "unread": "tɛ kalan",
+    "mark_all_read": "Kalan bɛɛ",
+    "empty_title": "Kunnafoni si tɛ yen",
+    "empty_message": "I tɛ kunnafoni si ye sisan",
+    "error_title": "Dɔnni fili",
+    "delete_title": "Ka bɔ",
+    "delete_message": "I bɛna kunnafoni in bɔ wa?",
+    "delete_error": "A ma se ka kunnafoni in bɔ",
+    "mark_all_error": "A ma se ka kunnafoni bɛɛ marka i ko u kalanna",
+    "success": "Ɲɛtaa",
+    "all_marked_read": "Kunnafoni bɛɛ markala ko u kalanna",
+    "just_now": "Sisan",
+    "minutes_ago": "miniti",
+    "hours_ago": "lɛrɛ",
+    "days_ago": "tile"
+  },
+  "product": {
+    "details": "Fɛn kunnafoniw",
+    "specifications": "Kunnafoni dafalen",
+    "description": "Ɲɛfɔli",
+    "add_to_cart": "Panye la farɔ",
+    "buy_now": "Sisan san",
+    "delivery_time": "Di waati",
+    "in_stock": "Ka bɛ yen",
+    "limited_stock": "Danfaraba",
+    "brand": "Maraka"
+  },
+  "payment": {
+    "title": "Sarali",
+    "wave_wallet": "Wave Wallet",
+    "enter_phone": "I ka telefɔni nimoro sɛbɛn",
+    "use_my_number": "N ka nimoro baara kɛ",
+    "confirm_payment": "Sarali tilatara",
+    "payment_success": "Sarali kɛlɛn",
+    "payment_failed": "Sarali filinw",
+    "processing": "Ka baara kɛ..."
+  },
+  "errors": {
+    "auth": {
+      "phone_required": "Telefɔni nimoro kan",
+      "phone_invalid": "Telefɔni nimoro tɛ tila",
+      "phone_format_invalid": "Telefɔni nimoro sɛbɛnni tila",
+      "otp_required": "OTP code kan",
+      "otp_invalid": "OTP code tɛ tila",
+      "otp_expired": "OTP code ban",
+      "password_required": "Daɲɛgafe kan",
+      "password_too_short": "Daɲɛgafe ka kan ka kɛ sɛn 6 ye",
+      "email_invalid": "Bataki ladɛrɛsi tɛ tila",
+      "auth_failed": "Tilatara filinw",
+      "token_expired": "I ka sigili ban",
+      "unauthorized": "Yamaruyako tɛ"
+    },
+    "cart": {
+      "empty_cart": "I ka panye banta",
+      "quantity_required": "Hakɛ ka kan ka kɛ 0 ye",
+      "gift_card_amount_invalid": "Hadiya kariti jatɛminen tɛ tila",
+      "gift_card_amount_required": "Hadiya kariti jatɛminen kan",
+      "out_of_stock": "O fɛn ban",
+      "gift_card_unavailable": "O hadiya kariti tɛ sɔrɔ kaban",
+      "insufficient_stock": "Danfaraba tɛ",
+      "max_quantity_exceeded": "Hakɛ caman tilara"
+    },
+    "order": {
+      "no_items": "Caama la fɛn foyi",
+      "shipping_address_required": "Fɛn tilennw ka sigiyɔrɔ kan",
+      "payment_not_confirmed": "Sarali ma tilatara",
+      "order_not_found": "Caama ma sɔrɔ",
+      "cannot_cancel": "O caama tɛ se ka dabɔ",
+      "already_cancelled": "O caama dabɔra kɔ"
+    },
+    "user": {
+      "full_name_required": "Tɔgɔ kɛlɛn kan",
+      "phone_required": "Telefɔni nimoro kan",
+      "address_required": "Sigiyɔrɔ kan",
+      "city_required": "Dugu kan",
+      "profile_incomplete": "I ka jago dafa"
+    },
+    "wave": {
+      "amount_required": "Jatɛminen kan",
+      "amount_too_low": "Jatɛminen fitinin ye 100 XOF ye",
+      "amount_too_high": "Jatɛminen kɛbɛ ye 5,000,000 XOF ye",
+      "phone_required": "Wave telefɔni nimoro kan",
+      "phone_invalid": "Wave telefɔni nimoro tɛ tila",
+      "payment_failed": "Sarali filinw",
+      "insufficient_balance": "Wariko tɛ",
+      "transaction_failed": "Jɔnjɔn filinw",
+      "network_error": "Jɛkɔlɔ fili",
+      "service_unavailable": "Baarakɛcogo tɛ sɔrɔ sisan"
+    },
+    "network": {
+      "connection_error": "Jɛkɔlɔ fili",
+      "timeout": "Waati ban",
+      "server_error": "Sɛrivɛri fili",
+      "unknown_error": "Fili dɔn tɛ"
+    }
+  },
+  "status": {
+    "order": {
+      "pending": {
+        "label": "Makɔnɔ",
+        "description": "I ka caama bɛ baara la"
+      },
+      "confirmed": {
+        "label": "Tilatara",
+        "description": "I ka caama tilatarama"
+      },
+      "processing": {
+        "label": "Ka baara kɛ",
+        "description": "I ka caama bɛ labɛnni la"
+      },
+      "shipped": {
+        "label": "Cigama",
+        "description": "I ka caama cigama"
+      },
+      "delivered": {
+        "label": "Dila",
+        "description": "I ka caama dilama"
+      },
+      "cancelled": {
+        "label": "Dabɔra",
+        "description": "I ka caama dabɔra"
+      },
+      "refunded": {
+        "label": "Seginna",
+        "description": "I ka caama seginna"
+      }
+    },
+    "payment": {
+      "pending": "Makɔnɔ",
+      "processing": "Ka baara kɛ",
+      "completed": "Dafalen",
+      "failed": "Filinw",
+      "cancelled": "Dabɔra",
+      "refunded": "Seginna"
+    },
+    "wave": {
+      "pending": "Makɔnɔ",
+      "completed": "Dafalen",
+      "failed": "Filinw",
+      "cancelled": "Dabɔra",
+      "expired": "Ban"
+    }
+  },
+  "validation": {
+    "gift_card": {
+      "amount_below_min": "Jatɛminen fitinin ye {min} XOF ye",
+      "amount_above_max": "Jatɛminen kɛbɛ ye {max} XOF ye",
+      "amount_not_multiple": "Jatɛminen ka kan ka kɛ {step} XOF fila ye",
+      "out_of_stock": "O hadiya kariti ban",
+      "inactive": "O hadiya kariti tɛ baara la kaban"
+    },
+    "product": {
+      "out_of_stock": "O fɛn ban",
+      "inactive": "O fɛn tɛ sɔrɔ kaban",
+      "quantity_exceeded": "Hakɛ ɲininen yɛlɛma mara la"
+    },
+    "phone": {
+      "senegal_format": "Nimoro ka kan ka kɛ Senegali sɛbɛnni la (+221)",
+      "ivory_coast_format": "Nimoro ka kan ka kɛ Kɔt Divuar sɛbɛnni la (+225)",
+      "invalid_operator": "Baarakɛbɔla dɛmɛ tɛ",
+      "invalid_length": "Nimoro janɲɔ tila"
+    }
+  },
+  "messages": {
+    "payment": {
+      "initiation_instructions": "{amount}*{reference}# wele i ka Wave telefɔni fɛ sarali tilatara",
+      "retry_instructions": "Ni sarali filinw, segin *144*1*{amount}*{reference}# wele",
+      "amount_details": "Jatɛminen: {amount} XOF",
+      "reference_details": "Lakanaw: {reference}",
+      "timeout_warning": "O sarali bɛna ban miniti {minutes} kɔnɔ",
+      "success_message": "I ka {amount} XOF sarali kɛlɛn",
+      "failed_message": "I ka {amount} XOF sarali filinw. Segin kɛ"
+    },
+    "order": {
+      "gift_card_amount_details": "Jatɛminen: {amount} XOF",
+      "quantity_details": "Hakɛ: {quantity}",
+      "sku_details": "SKU: {sku}",
+      "unknown_product": "Fɛn dɔn tɛ",
+      "items_removed_count": "Fɛn {count} bɔra",
+      "stock_available": "Fɛn {count} dɔrɔn de bɛ yen",
+      "cards_available": "Kariti {count} dɔrɔn de bɛ yen"
+    },
+    "shipping": {
+      "base_cost": "Jusigilan: {amount} XOF",
+      "additional_items": "Fɛn fan: {amount} XOF",
+      "location_adjustment": "Yɔrɔ ladamu: {percentage}%",
+      "abidjan_discount": "Abidjan dɔncɔgo: -20%",
+      "remote_area_surcharge": "Janyɔrɔ wari fan: +50%"
+    }
+  },
+  "currency": {
+    "xof": "XOF",
+    "format": "{amount} XOF",
+    "format_with_space": "{amount} XOF"
+  },
+  "locations": {
+    "abidjan": "Abidjan",
+    "bouake": "Bouaké",
+    "san_pedro": "San-Pedro",
+    "yamoussoukro": "Yamoussoukro",
+    "ivory_coast": "Kɔt Divuar"
+  },
+  "update": {
+    "title": "Kɛra Bɛ Yen",
+    "message": "Baarakɛminɛn kura bɛ yen. Sisan kɛra walasa ka sɔrɔ ka ɲi.",
+    "downloading": "Kɛra ka telesarse...",
+    "updating": "Kɛra ka sigi...",
+    "update_now": "Sisan Kɛra",
+    "later": "Kɔfɛ",
+    "version": "Version",
+    "check_updates": "Kɛra Lajɛ",
+    "no_update_available": "Kɛra Foyi",
+    "app_up_to_date": "I ka app kuraw ye"
+  },
+  "admin": {
+    "common": {
+      "search": "Ka ɲini...",
+      "filter": "Ka sugu",
+      "export": "Ka bɔ",
+      "import": "Ka don",
+      "actions": "Baaraw",
+      "bulk_actions": "Baara caman",
+      "select_all": "Bɛɛ sugandi",
+      "deselect_all": "Bɛɛ banna",
+      "delete_selected": "Sugandilenw bɔ",
+      "refresh": "Ka kura",
+      "save": "Ka mara",
+      "cancel": "Ka banna",
+      "edit": "Ka ladamu",
+      "delete": "Ka bɔ",
+      "view": "Ka lajɛ",
+      "details": "Kunnafoniw",
+      "status": "Cogoya",
+      "date": "Don",
+      "actions_menu": "Baara lisɛli",
+      "no_data": "Kunnafoni foyi",
+      "loading": "Ka doni...",
+      "error": "Fili",
+      "success": "A kɛlɛn",
+      "confirm": "Ka tilatara",
+      "download": "Ka telesarse",
+      "upload": "Ka bila",
+      "image": "Ja",
+      "active": "Ka baara kɛ",
+      "inactive": "Baara tɛ"
+    },
+    "dashboard": {
+      "title": "Baarakɛcogo Kunnafonisɛbɛn",
+      "subtitle": "Yu Card plateforme lajɛ",
+      "overview": "Lajɛ",
+      "quick_stats": "Jateden teliya",
+      "recent_activity": "Baara laban",
+      "analytics": "Jateminɛw",
+      "revenue": "Wariko",
+      "total_revenue": "Wariko bɛɛ",
+      "today_revenue": "Bi wariko",
+      "monthly_revenue": "Kalo wariko",
+      "orders": "Caamuw",
+      "total_orders": "Caamu bɛɛ",
+      "pending_orders": "Caamu makɔnɔw",
+      "completed_orders": "Caamu dafalen",
+      "users": "Baarakɛlaw",
+      "total_users": "Baarakɛla bɛɛ",
+      "new_users": "Baarakɛla kuraw",
+      "active_users": "Baarakɛla ka baara kɛ",
+      "products": "Fɛnw",
+      "total_products": "Fɛn bɛɛ",
+      "low_stock": "Mara dɔgɔ",
+      "out_of_stock": "Mara ban",
+      "gift_cards": "Hadiya karitiw",
+      "total_gift_cards": "Kariti bɛɛ",
+      "active_codes": "Code ka baara kɛ",
+      "used_codes": "Code kɛra",
+      "period": {
+        "today": "Bi",
+        "week": "Dɔgɔkun in",
+        "month": "Kalo in",
+        "year": "San in",
+        "custom": "Sugandilen"
+      },
+      "charts": {
+        "revenue_trend": "Wariko ɲɛtaa",
+        "orders_by_status": "Caamu cogoya fɛ",
+        "top_products": "Fɛn ɲumanw",
+        "user_growth": "Baarakɛla yɛlɛma"
+      }
+    },
+    "users": {
+      "title": "Baarakɛla Kunnafonidilan",
+      "subtitle": "Baarakɛla jago ani baara kunnafonidilan",
+      "all_users": "Baarakɛla bɛɛ",
+      "user_details": "Baarakɛla kunnafoniw",
+      "edit_user": "Baarakɛla ladamu",
+      "suspend_user": "Baarakɛla dabɔ",
+      "activate_user": "Baarakɛla baara",
+      "delete_user": "Baarakɛla bɔ",
+      "user_info": "Baarakɛla kunnafoni",
+      "full_name": "Tɔgɔ kɛlɛn",
+      "phone": "Telefɔni",
+      "email": "Bataki",
+      "role": "Baara",
+      "status": "Cogoya",
+      "created_at": "Dalenni don",
+      "last_login": "Don laban",
+      "wallet_balance": "Wallet wariko",
+      "total_orders": "Caamu bɛɛ",
+      "total_spent": "Wari bɛɛ",
+      "filter_by_role": "Baara fɛ sugu",
+      "filter_by_status": "Cogoya fɛ sugu",
+      "statuses": {
+        "all": "Bɛɛ",
+        "active": "Ka baara kɛ",
+        "suspended": "Dabɔlen",
+        "pending": "Makɔnɔ"
+      },
+      "roles": {
+        "all": "Baara bɛɛ",
+        "client": "Kiliyan",
+        "admin": "Administratɛri",
+        "super_admin": "Administratɛri kɔrɔba"
+      },
+      "wallet": {
+        "title": "Wallet Kunnafonidilan",
+        "credit": "Ka wari bila",
+        "debit": "Ka wari bɔ",
+        "amount": "Jatɛminen",
+        "description": "Ɲɛfɔli",
+        "confirm_credit": "Wari bila tilatara",
+        "confirm_debit": "Wari bɔ tilatara",
+        "current_balance": "Wariko sisan",
+        "new_balance": "Wariko kura"
+      },
+      "suspend_confirm": "Dabɔli tilatara",
+      "suspend_message": "I bɛna o baarakɛla dabɔ tilin?",
+      "activate_confirm": "Baara tilatara",
+      "activate_message": "I bɛna o baarakɛla baara tilin?"
+    },
+    "orders": {
+      "title": "Caamu Kunnafonidilan",
+      "subtitle": "Caamu lajɛli ani baara",
+      "all_orders": "Caamu bɛɛ",
+      "order_details": "Caamu kunnafoniw",
+      "order_number": "Caamu nimoro",
+      "customer": "Kiliyan",
+      "order_date": "Caamu don",
+      "status": "Cogoya",
+      "payment_status": "Sarali cogoya",
+      "total_amount": "Jatɛminen bɛɛ",
+      "items": "Fɛnw",
+      "shipping": "Ci",
+      "shipping_address": "Ci yɔrɔ",
+      "delivery_date": "Di don",
+      "tracking_number": "Lajɛli nimoro",
+      "filter_by_status": "Cogoya fɛ sugu",
+      "filter_by_payment": "Sarali fɛ sugu",
+      "date_range": "Don janya",
+      "from_date": "Don fɔlɔ",
+      "to_date": "Don laban",
+      "statuses": {
+        "all": "Bɛɛ",
+        "pending": "Makɔnɔ",
+        "confirmed": "Tilataralen",
+        "processing": "Ka baara kɛ",
+        "shipped": "Cigama",
+        "delivered": "Dilama",
+        "cancelled": "Dabɔra",
+        "refunded": "Seginna"
+      },
+      "payment_statuses": {
+        "all": "Bɛɛ",
+        "pending": "Makɔnɔ",
+        "completed": "Dafalen",
+        "failed": "Filinw",
+        "refunded": "Seginna"
+      },
+      "update_status": "Cogoya kɛra",
+      "change_status": "Cogoya ɔɔlɔn",
+      "select_new_status": "Cogoya kura sugandi",
+      "status_updated": "Cogoya kɛrara",
+      "export_csv": "CSV bɔ",
+      "print_invoice": "Fakture gafe",
+      "send_notification": "Kunnafoni ci",
+      "refund_order": "Caamu segin",
+      "cancel_order": "Caamu dabɔ",
+      "confirm_cancel": "Dabɔli tilatara",
+      "confirm_refund": "Seginni tilatara",
+      "cancel_message": "I bɛna o caamu dabɔ tilin?",
+      "refund_message": "I bɛna o caamu segin tilin?"
+    },
+    "products": {
+      "title": "Fɛn Kunnafonidilan",
+      "subtitle": "Fɛn katalɔgu kunnafonidilan",
+      "all_products": "Fɛn bɛɛ",
+      "add_product": "Fɛn farɔ",
+      "edit_product": "Fɛn ladamu",
+      "delete_product": "Fɛn bɔ",
+      "product_details": "Fɛn kunnafoniw",
+      "basic_info": "Kunnafoni jɛya",
+      "product_name": "Fɛn tɔgɔ",
+      "type": "Sugu",
+      "category": "Suguya",
+      "description": "Ɲɛfɔli",
+      "pricing": "Musakaw",
+      "price": "Musaka",
+      "cost_price": "Musaka jɔli",
+      "discount": "Dɔncɔgo",
+      "inventory": "Mara",
+      "stock_quantity": "Mara hakɛ",
+      "sku": "SKU",
+      "barcode": "Barcode",
+      "track_inventory": "Mara lajɛli",
+      "low_stock_threshold": "Mara dɔgɔ dan",
+      "images": "Jaw",
+      "upload_images": "Jaw bila",
+      "main_image": "Ja jɛya",
+      "gallery": "Ja yɔrɔ",
+      "settings": "Labɛnw",
+      "is_popular": "Fɛn dibalen",
+      "is_featured": "Fɛn jiralen",
+      "is_active": "Ka baara kɛ",
+      "delivery_time": "Di waati (taaw)",
+      "warranty": "Garanti (kalow)",
+      "meta_keywords": "SEO daɲɛw",
+      "confirm_delete": "Bɔli tilatara",
+      "delete_warning": "O baara tɛ se ka segin",
+      "low_stock": "Mara dɔgɔ",
+      "out_of_stock": "Mara ban",
+      "in_stock": "Mara bɛ yen",
+      "views": "Lajɛliw",
+      "favorites": "Diyalenw",
+      "sales": "Feere",
+      "types": {
+        "all": "Bɛɛ",
+        "physical": "Fɛn tilenna",
+        "gift_card": "Hadiya kariti"
+      },
+      "stock_status": {
+        "all": "Bɛɛ",
+        "in_stock": "Mara bɛ yen",
+        "low_stock": "Mara dɔgɔ",
+        "out_of_stock": "Mara ban"
+      }
+    },
+    "gift_cards": {
+      "title": "Hadiya Kariti Kunnafonidilan",
+      "subtitle": "Kariti ani codew kunnafonidilan",
+      "all_codes": "Code bɛɛ",
+      "generate_codes": "Codew da",
+      "code": "Code",
+      "amount": "Jatɛminen",
+      "status": "Cogoya",
+      "created_at": "Dalenni don",
+      "expires_at": "Ban don",
+      "used_at": "Kɛra don",
+      "user": "Baarakɛla",
+      "statuses": {
+        "all": "Bɛɛ",
+        "pending": "Makɔnɔ",
+        "active": "Ka baara kɛ",
+        "used": "Kɛrara",
+        "expired": "Bannen",
+        "cancelled": "Dabɔra"
+      },
+      "generation": {
+        "title": "Code kuraw da",
+        "amount": "Kariti jatɛminen",
+        "quantity": "Hakɛ",
+        "expiry_days": "Cogoya (taaw)",
+        "generate": "Da",
+        "generating": "Ka da..."
+      },
+      "actions": {
+        "activate": "Ka baara",
+        "cancel": "Ka dabɔ",
+        "details": "Kunnafoniw",
+        "copy": "Code kopi",
+        "share": "Tila"
+      },
+      "activation": {
+        "title": "Hadiya kariti baara",
+        "email": "Bataki",
+        "confirm": "Baara",
+        "activating": "Ka baara..."
+      },
+      "details": {
+        "title": "Kariti kunnafoniw",
+        "code": "Code",
+        "amount": "Jatɛminen",
+        "status": "Cogoya",
+        "created": "Dalenni don",
+        "expires": "Ban don",
+        "used": "Kɛra don",
+        "user_email": "Baarakɛla bataki"
+      },
+      "confirm_cancel": "Dabɔli tilatara",
+      "cancel_message": "I bɛna o code dabɔ tilin?",
+      "success": {
+        "generated": "Codew dara kɛlɛn",
+        "activated": "Kariti baarara",
+        "cancelled": "Code dabɔra",
+        "copied": "Kopira",
+        "copiedDesc": "Code kopira clipboard la"
+      },
+      "errors": {
+        "generateError": "Code da filinw",
+        "activateError": "Baara filinw",
+        "cancelError": "Dabɔli filinw",
+        "copyError": "Kopi filinw",
+        "emailRequired": "Bataki ka kan"
+      }
+    },
+    "categories": {
+      "title": "Suguya Kunnafonidilan",
+      "subtitle": "Fɛnw ani karitiw labɛn",
+      "all_categories": "Suguya bɛɛ",
+      "add_category": "Suguya farɔ",
+      "edit_category": "Suguya ladamu",
+      "delete_category": "Suguya bɔ",
+      "category_name": "Suguya tɔgɔ",
+      "description": "Ɲɛfɔli",
+      "icon": "Taamasiyɛn",
+      "upload_icon": "Taamasiyɛn bila",
+      "products_count": "Fɛn hakɛ",
+      "is_active": "Ka baara kɛ",
+      "created_at": "Dalenni don",
+      "confirm_delete": "Bɔli tilatara",
+      "delete_warning": "O suguya bɛna bɔ kaban kaban",
+      "success": {
+        "created": "Suguya dara",
+        "updated": "Suguya kɛrara",
+        "deleted": "Suguya bɔra"
+      },
+      "errors": {
+        "createError": "Suguya da filinw",
+        "updateError": "Kɛra filinw",
+        "deleteError": "Bɔli filinw",
+        "nameRequired": "Tɔgɔ ka kan"
+      }
+    },
+    "delivery": {
+      "title": "Di Kunnafonidilan",
+      "subtitle": "Di ka baara kɛ lajɛli"
+    },
+    "notifications": {
+      "title": "Kunnafoni Kunnafonidilan",
+      "subtitle": "Baarakɛlaw ma kunnafoni ci"
+    },
+    "reports": {
+      "title": "Wariko Rapɔriw",
+      "subtitle": "Wariko jateminɛw ani jatedenw"
+    },
+    "audit": {
+      "title": "Audit Logs",
+      "subtitle": "Administratɛri baara tariku"
+    },
+    "settings": {
+      "title": "Admin Labɛnw",
+      "subtitle": "Yu Card sistɛmu labɛn ani kunnafonidilan"
+    },
+    "wallet": {
+      "title": "Wallet Kunnafonidilan",
+      "adjust_balance": "Wariko ladamu",
+      "credit": "Wari bila",
+      "debit": "Wari bɔ"
+    },
+    "stats": {
+      "total_revenue": "Wariko bɛɛ",
+      "total_orders": "Caamu bɛɛ",
+      "total_users": "Baarakɛla bɛɛ",
+      "total_products": "Fɛn bɛɛ",
+      "total_wallet": "Wallet bɛɛ"
+    },
+    "messages": {
+      "loading": "Ka doni...",
+      "no_data": "Kunnafoni foyi",
+      "success": "Baara kɛlɛn",
+      "error": "Fili yɛlɛma",
+      "confirm_action": "Baara tilatara"
+    }
+  }
+}

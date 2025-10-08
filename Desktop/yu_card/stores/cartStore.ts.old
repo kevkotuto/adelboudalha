@@ -1,0 +1,121 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CartItem, CartState, CartActions } from '@/types/cart';
+import { GiftCardData, PhysicalProductData } from '@/data/mockData';
+
+interface CartStore extends CartState, CartActions {}
+
+const useCartStore = create<CartStore>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      total: 0,
+      itemCount: 0,
+      currency: 'CFA',
+
+      addItem: (product: GiftCardData | PhysicalProductData, quantity = 1) => {
+        const existingItem = get().items.find(item => item.productId === product.id);
+
+        if (existingItem) {
+          // Si l'article existe déjà, augmenter la quantité
+          get().updateQuantity(product.id, existingItem.quantity + quantity);
+        } else {
+          // Créer un nouvel article selon le type
+          const newItem: CartItem = {
+            id: `cart_${product.id}_${Date.now()}`,
+            type: 'brand' in product && 'amount' in product ? 'gift_card' : 'physical_product',
+            productId: product.id,
+            name: 'title' in product ? product.title : product.name,
+            brand: product.brand,
+            price: 'amount' in product ? product.amount! : product.price,
+            currency: product.currency,
+            quantity,
+            image: 'image' in product ? product.image : product.images?.[0],
+            maxQuantity: product.stock,
+          };
+
+          // Ajouter les propriétés spécifiques selon le type
+          if ('amount' in product) {
+            // Gift Card
+            newItem.giftCardAmount = product.amount;
+          } else {
+            // Produit physique
+            newItem.specifications = product.specifications;
+            newItem.deliveryTime = product.deliveryTime;
+          }
+
+          set(state => ({
+            items: [...state.items, newItem],
+          }));
+        }
+
+        // Recalculer les totaux
+        get().calculateTotals();
+      },
+
+      removeItem: (productId: string) => {
+        set(state => ({
+          items: state.items.filter(item => item.productId !== productId),
+        }));
+        get().calculateTotals();
+      },
+
+      updateQuantity: (productId: string, quantity: number) => {
+        if (quantity <= 0) {
+          get().removeItem(productId);
+          return;
+        }
+
+        set(state => ({
+          items: state.items.map(item => {
+            if (item.productId === productId) {
+              const newQuantity = Math.min(quantity, item.maxQuantity || 999);
+              return { ...item, quantity: newQuantity };
+            }
+            return item;
+          }),
+        }));
+        get().calculateTotals();
+      },
+
+      clearCart: () => {
+        set({
+          items: [],
+          total: 0,
+          itemCount: 0,
+        });
+      },
+
+      getCartTotal: () => {
+        const state = get();
+        return state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+      },
+
+      getItemCount: () => {
+        const state = get();
+        return state.items.reduce((count, item) => count + item.quantity, 0);
+      },
+
+      // Méthode interne pour recalculer les totaux
+      calculateTotals: () => {
+        set(state => ({
+          total: get().getCartTotal(),
+          itemCount: get().getItemCount(),
+        }));
+      },
+    }),
+    {
+      name: 'yu-card-cart',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        items: state.items,
+        total: state.total,
+        itemCount: state.itemCount,
+        currency: state.currency,
+      }),
+    }
+  )
+);
+
+export default useCartStore;
