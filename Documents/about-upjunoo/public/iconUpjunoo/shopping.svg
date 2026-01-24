@@ -1,0 +1,22 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <linearGradient id="shopGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a9ea3"/>
+      <stop offset="100%" style="stop-color:#0d7377"/>
+    </linearGradient>
+    <linearGradient id="shopGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Shopping bag -->
+  <path d="M8 16 L12 8 L36 8 L40 16 L40 42 C40 43.1 39.1 44 38 44 L10 44 C8.9 44 8 43.1 8 42 Z" fill="url(#shopGrad1)"/>
+  <!-- Bag top -->
+  <rect x="8" y="14" width="32" height="6" fill="url(#shopGrad2)"/>
+  <!-- Handle -->
+  <path d="M18 14 L18 10 C18 6.7 20.7 4 24 4 C27.3 4 30 6.7 30 10 L30 14" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Stars/sparkles -->
+  <circle cx="24" cy="30" r="2" fill="white" opacity="0.9"/>
+  <circle cx="18" cy="34" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="30" cy="34" r="1.5" fill="white" opacity="0.6"/>
+</svg>

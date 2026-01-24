@@ -1,0 +1,22 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <linearGradient id="eventGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a9ea3"/>
+      <stop offset="100%" style="stop-color:#0d7377"/>
+    </linearGradient>
+    <linearGradient id="eventGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444"/>
+      <stop offset="100%" style="stop-color:#dc2626"/>
+    </linearGradient>
+  </defs>
+  <!-- Calendar base -->
+  <rect x="6" y="10" width="36" height="34" rx="4" fill="url(#eventGrad1)"/>
+  <!-- Calendar top bar -->
+  <rect x="6" y="10" width="36" height="10" rx="4" fill="url(#eventGrad2)"/>
+  <rect x="6" y="16" width="36" height="4" fill="url(#eventGrad2)"/>
+  <!-- Calendar rings -->
+  <rect x="14" y="6" width="4" height="10" rx="2" fill="#374151"/>
+  <rect x="30" y="6" width="4" height="10" rx="2" fill="#374151"/>
+  <!-- Calendar date -->
+  <text x="24" y="36" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">15</text>
+</svg>
